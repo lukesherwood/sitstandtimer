@@ -1,6 +1,6 @@
 ---
 // Component Imports
-import Counter from '../components/Counter.svelte';
+import Main from '../components/Main.svelte';
 
 // Full Astro Component Syntax:
 // https://docs.astro.build/core-concepts/astro-components/
@@ -13,11 +13,9 @@ import Counter from '../components/Counter.svelte';
 		<meta name="generator" content={Astro.generator} />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 	</head>
-	<body class="p-8">
+	<body class="p-8 bg-teal-500">
 		<main>
-			<Counter client:visible>
-				<h1>Hello, Svelte!</h1>
-			</Counter>
+			<Main client:visible/>
 		</main>
 	</body>
 </html>
