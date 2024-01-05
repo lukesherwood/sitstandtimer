@@ -1,11 +1,11 @@
 <script>
-  import Keypad from "./Keypad.svelte";
+  import Keypad from "./SetTime.svelte";
   import Timer from "./Timer.svelte";
 
   let countdown;
 </script>
 
-<div>
+<div class="max-w-xs mx-auto p-4">
   {#if countdown}
     <Timer
       on:new={() => {
@@ -23,33 +23,4 @@
 </div>
 
 <style>
-  :global(*) {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-
-  :global(body) {
-    min-height: 100vh;
-    color: hsl(0, 0%, 98%);
-    background: hsl(240, 80%, 6%);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-      Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
-  }
-
-  :global(.visually-hidden:not(:focus):not(:active)) {
-    clip: rect(0 0 0 0);
-    clip-path: inset(50%);
-    height: 1px;
-    overflow: hidden;
-    position: absolute;
-    white-space: nowrap;
-    width: 1px;
-  }
-
-  div {
-    max-width: 300px;
-    margin: 1rem auto;
-    padding: 1rem;
-  }
 </style>

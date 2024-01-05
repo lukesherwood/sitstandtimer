@@ -77,20 +77,20 @@
   });
 </script>
 
-<main>
+<main class="py-0 px-4 text-red-200">
   <svg in:fly={{ y: -5 }} viewBox="-50 -50 100 100" width="250" height="250">
     <title>Remaining seconds: {count}</title>
     <g fill="none" stroke="currentColor" stroke-width="2">
       <circle stroke="currentColor" r="46" />
       <path
-        stroke="hsl(208, 100%, 50%)"
+        stroke="#115E59"
         d="M 0 -46 a 46 46 0 0 0 0 92 46 46 0 0 0 0 -92"
         pathLength="1"
         stroke-dasharray="1"
         stroke-dashoffset={$offset}
       />
     </g>
-    <g fill="hsl(208, 100%, 50%)" stroke="none">
+    <g fill="#115E59" stroke="none">
       <g transform="rotate({$rotation})">
         <g transform="translate(0 -46)">
           <circle r="4" />
@@ -117,113 +117,61 @@
     </g>
   </svg>
 
-  <div in:fly={{ y: -10, delay: 120 }}>
-    <button on:click={handleNew}>New timer</button>
+  <div
+    class="flex justify-between items-center mt-4"
+    in:fly={{ y: -10, delay: 120 }}
+  >
+    <button
+      on:click={handleNew}
+      class="w-12 h-12 flex justify-center items-center rounded-full bg-teal-800 shadow hover:bg-amber-500 transition ease-in-out duration-200"
+    >
+      <span>New</span>
+    </button>
 
     {#if isPaused}
-      <button disabled={isResetting || count === 0} on:click={handleStart}>
-        <span class="visually-hidden">Start timer</span>
-
-        <svg viewBox="-50 -50 100 100" width="30" height="30">
-          <g
-            fill="none"
-            stroke="currentColor"
-            stroke-width="20"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M -25 -40 l 60 40 -60 40z" />
-          </g>
+      <button
+        disabled={isResetting || count === 0}
+        on:click={handleStart}
+        class="w-24 h-24 flex justify-center items-center rounded-full bg-teal-800 shadow hover:bg-amber-500 transition ease-in-out duration-200"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="w-6 h-6"
+        >
+          <polygon points="5 3 19 12 5 21 5 3"></polygon>
         </svg>
       </button>
     {:else}
-      <button disabled={isResetting || count === 0} on:click={handlePause}>
-        <span class="visually-hidden">Pause timer</span>
-        <svg viewBox="-50 -50 100 100" width="30" height="30">
-          <g
-            fill="none"
-            stroke="currentColor"
-            stroke-width="20"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          >
-            <path d="M -25 -30 v 60 m 50 0 v -60" />
-          </g>
+      <button
+        disabled={isResetting || count === 0}
+        on:click={handlePause}
+        class="w-24 h-24 flex justify-center items-center rounded-full bg-teal-800 shadow hover:bg-amber-500 transition ease-in-out duration-200"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="w-6 h-6"
+        >
+          <rect x="6" y="4" width="4" height="16"></rect>
+          <rect x="14" y="4" width="4" height="16"></rect>
         </svg>
       </button>
     {/if}
 
-    <button on:click={handleReset}>Reset timer</button>
+    <button
+      on:click={handleReset}
+      class="w-12 h-12 flex justify-center items-center rounded-full bg-teal-800 shadow hover:bg-amber-500 transition ease-in-out duration-200"
+    >
+      <span>Reset</span>
+    </button>
   </div>
 </main>
-
-<style>
-  main {
-    padding: 0rem 1rem;
-  }
-
-  main > svg {
-    width: 100%;
-    height: auto;
-    display: block;
-    margin: 0 auto 2rem;
-  }
-
-  div {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  @supports (display: grid) {
-    div {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      justify-content: initial;
-      justify-items: center;
-    }
-  }
-
-  button:nth-of-type(odd) {
-    width: max-content;
-    font-size: 0.9rem;
-    color: inherit;
-    border: none;
-    background: none;
-    text-transform: capitalize;
-  }
-
-  button:nth-of-type(odd):hover {
-    text-decoration: underline;
-  }
-
-  button:nth-of-type(2) {
-    color: inherit;
-    width: 3rem;
-    height: 3rem;
-    border-radius: 50%;
-    border: none;
-    padding: 1rem;
-    background: hsl(208, 100%, 50%);
-    box-shadow: 0px 1px 2px hsl(208, 100%, 50%);
-    transition:
-      box-shadow 0.2s ease-in-out,
-      transform 0.25s ease-in-out;
-  }
-
-  button:nth-of-type(2):hover,
-  button:nth-of-type(2):focus {
-    box-shadow: 0px 1px 5px hsl(208, 100%, 50%);
-  }
-
-  button:nth-of-type(2) svg {
-    margin: initial;
-    width: 100%;
-    height: auto;
-    display: block;
-  }
-
-  button[disabled] {
-    transform: scale(0);
-  }
-</style>
