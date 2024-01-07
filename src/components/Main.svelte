@@ -5,7 +5,7 @@
   let countdown;
 </script>
 
-<div class="max-w-xs mx-auto p-4">
+<div class="p-4 w-full max-h-fit">
   {#if countdown}
     <Timer
       on:new={() => {

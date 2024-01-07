@@ -1,5 +1,6 @@
 <script>
   import { createEventDispatcher } from "svelte";
+  import Button from "./Button.svelte";
 
   const dispatch = createEventDispatcher();
 
@@ -8,29 +9,45 @@
   }
 </script>
 
-<div class="p-4 max-w-sm mx-auto flex flex-col space-y-4 text-red-200">
-  <button
-    on:click={() => submitTime(15)}
-    class="p-2 border border-transparent shadow-sm text-lg font-medium rounded bg-teal-800 hover:bg-amber-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-  >
-    15 Minutes
-  </button>
-  <button
-    on:click={() => submitTime(30)}
-    class="p-2 border border-transparent shadow-sm text-lg font-medium rounded bg-teal-800 hover:bg-amber-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-  >
-    30 Minutes
-  </button>
-  <button
-    on:click={() => submitTime(45)}
-    class="p-2 border border-transparent shadow-sm text-lg font-medium rounded bg-teal-800 hover:bg-amber-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-  >
-    45 Minutes
-  </button>
-  <button
-    on:click={() => submitTime(60)}
-    class="p-2 border border-transparent shadow-sm text-lg font-medium rounded bg-teal-800 hover:bg-amber-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-  >
-    60 Minutes
-  </button>
+<div>
+  <div class="pb-4">
+    <h2 class="font-bold text-xl text-center">Select Timer Duration:</h2>
+  </div>
+  <div class="p-4 flex flex-col md:flex-row justify-center gap-5 text-red-100">
+    <Button
+      on:click={() => submitTime(5)}
+      tooltip="New Timer"
+      clazz="text-lg font-medium w-24 h-24 p-8"
+    >
+      5 Minutes
+    </Button>
+    <Button
+      on:click={() => submitTime(15)}
+      tooltip="New Timer"
+      clazz="text-lg font-medium w-24 h-24 p-8"
+    >
+      15 Minutes
+    </Button>
+    <Button
+      on:click={() => submitTime(30)}
+      tooltip="New Timer"
+      clazz="text-lg font-medium w-24 h-24 p-8"
+    >
+      30 Minutes
+    </Button>
+    <Button
+      on:click={() => submitTime(45)}
+      tooltip="New Timer"
+      clazz="text-lg font-medium w-24 h-24 p-8"
+    >
+      45 Minutes
+    </Button>
+    <Button
+      on:click={() => submitTime(60)}
+      tooltip="New Timer"
+      clazz="text-lg font-medium w-24 h-24 p-8"
+    >
+      60 Minutes
+    </Button>
+  </div>
 </div>
