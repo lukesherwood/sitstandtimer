@@ -15,6 +15,13 @@
   </div>
   <div class="p-4 flex flex-col md:flex-row justify-center gap-5 text-red-100">
     <Button
+      on:click={() => submitTime(0.16)}
+      tooltip="New Timer"
+      clazz="text-lg font-medium w-24 h-24 p-8"
+    >
+      10 seconds
+    </Button>
+    <Button
       on:click={() => submitTime(5)}
       tooltip="New Timer"
       clazz="text-lg font-medium w-24 h-24 p-8"

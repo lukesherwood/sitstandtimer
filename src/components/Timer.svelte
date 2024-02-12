@@ -1,5 +1,5 @@
 <script>
-  import { createEventDispatcher, onDestroy } from "svelte";
+  import { createEventDispatcher, onDestroy, onMount } from "svelte";
   import { tweened } from "svelte/motion";
   import { linear as easing } from "svelte/easing";
   import { fly } from "svelte/transition";
@@ -8,6 +8,9 @@
   const dispatch = createEventDispatcher();
 
   export let countdown;
+
+  let timerComplete = false;
+  let audio;
 
   let now = Date.now();
   let end = now + countdown * 1000;
@@ -22,7 +25,12 @@
   }
 
   let interval = setInterval(updateTimer, 1000);
-  $: if (count === 0) clearInterval(interval);
+
+  $: if (count === 0) {
+    clearInterval(interval);
+    audio.play();
+    timerComplete = true;
+  }
 
   let isPaused;
   let isResetting;
@@ -79,6 +87,7 @@
 </script>
 
 <main class="text-red-100 max-w-sm mx-auto">
+  <audio src="alarm.wav" bind:this={audio}></audio>
   <h1 class="text-center font-bold text-3xl py-8">
     {countdown / 60} Minute Timer
   </h1>
@@ -200,4 +209,11 @@
       </svg>
     </Button>
   </div>
+  {#if timerComplete}
+    <div
+      class="text-center p-4 text-xl m-5 bg-red-300 text-teal-800 rounded-full font-bold"
+    >
+      <h2>Timer Complete!</h2>
+    </div>
+  {/if}
 </main>
