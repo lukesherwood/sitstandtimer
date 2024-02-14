@@ -1,5 +1,5 @@
 <script>
-  import { createEventDispatcher, onDestroy, onMount } from "svelte";
+  import { createEventDispatcher, onDestroy } from "svelte";
   import { tweened } from "svelte/motion";
   import { linear as easing } from "svelte/easing";
   import { fly } from "svelte/transition";
@@ -65,6 +65,7 @@
 
   function handleReset() {
     clearInterval(interval);
+    timerComplete = false;
     isResetting = true;
     isPaused = false;
     Promise.all([offset.set(1), rotation.set(360)]).then(() => {
