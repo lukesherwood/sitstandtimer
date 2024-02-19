@@ -26,7 +26,6 @@
         </a>
         <!-- Desktop Links - Shown inline with Home button on larger screens -->
         <div class="hidden md:flex space-x-4 items-center">
-          <a href="/" class="py-2 px-3 font-bold hover:text-gray-900">Home</a>
           <a href="/about" class="py-2 px-3 font-bold hover:text-gray-900"
             >About</a
           >
