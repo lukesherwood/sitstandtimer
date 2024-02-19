@@ -89,7 +89,7 @@
 
 <main class="text-red-100 max-w-sm mx-auto">
   <audio src="alarm.wav" bind:this={audio}></audio>
-  <h1 class="text-center font-bold text-3xl py-8">
+  <h1 class="text-center py-8">
     {countdown / 60} Minute Timer
   </h1>
   <svg
@@ -212,7 +212,7 @@
   </div>
   {#if timerComplete}
     <div
-      class="text-center p-4 text-xl m-5 bg-red-300 text-teal-800 rounded-full font-bold"
+      class="text-center p-4 m-5 bg-red-300 text-teal-800 rounded-full"
     >
       <h2>Timer Complete!</h2>
     </div>

@@ -1,0 +1,19 @@
+---
+import Navbar from "../components/Navbar.svelte";
+const { title } = Astro.props;
+import '../styles/custom.css';
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body class="bg-teal-500">
+      <Navbar client:load />
+    <main class="max-w-3xl mx-auto p-5 text-red-100">
+      <slot />
+    </main>
+  </body>
+</html>

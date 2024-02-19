@@ -11,7 +11,7 @@
 
 <div>
   <div class="pb-4">
-    <h2 class="font-bold text-red-100 text-xl text-center">Select Timer Duration:</h2>
+    <h2 class="text-red-100 text-center">Select Timer Duration:</h2>
   </div>
   <div class="p-4 flex flex-col md:flex-row justify-center gap-5 text-red-100">
     <Button

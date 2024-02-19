@@ -1,21 +1,8 @@
 ---
-// Component Imports
-import Main from '../components/Main.svelte';
-
-// Full Astro Component Syntax:
-// https://docs.astro.build/core-concepts/astro-components/
+import Layout from "../layout/Layout.astro";
+import Main from "../components/Main.svelte";
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-	</head>
-	<body class="bg-teal-500">
-		<main>
-			<Main client:visible/>
-		</main>
-	</body>
-</html>
+<Layout>
+  <Main client:visible />
+</Layout>
