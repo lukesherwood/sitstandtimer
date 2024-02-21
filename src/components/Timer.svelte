@@ -93,7 +93,7 @@
     {#if countdown > 60}
       {countdown / 60} Minute Timer
     {:else}
-      {Math.round(countdown)} Second Timer
+      {Math.round(countdown)}s Timer
     {/if}
   </h1>
   <svg
