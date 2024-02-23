@@ -28,6 +28,22 @@
     ergonomic best practices.
   </p>
 
+  <p class="mb-4">
+    <a
+      target="_blank"
+      href="https://www.fitnessmadeclear.com/blog-1/2019/5/11/dr-stu-mcgills-10-best-habits-for-a-healthy-back#:~:text=Avoid%20Prolonged%20Sitting&text=Dr%20McGill%20recommends%20adjusting%20your,walking%20for%20a%20few%20minutes."
+      ><strong>Read more </strong></a
+    >
+  </p>
+
+  <p class="mb-4">
+    <a target="_blank" href="https://www.youtube.com/watch?v=bcIJa92TY0k"
+      ><strong>Watch</strong></a
+    >
+    an interview with Dr. Stuart McGill -<em> The Back Mechanic </em>for more
+    information
+  </p>
+
   <p>
     Embrace the benefits of a dynamic workplace with <strong
       >SitStandTimer</strong

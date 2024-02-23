@@ -4,7 +4,7 @@
   export let tooltip;
   export let disabled = false;
   export let disabledText = "Disabled";
-  export let clazz
+  export let clazz = "";
 
   let showTooltip = false;
   function handleClick() {

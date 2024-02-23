@@ -7,30 +7,37 @@
 
   const dispatch = createEventDispatcher();
 
-  export let countdown;
+  export let times;
+
+  // TODO: need to create a function that will take the times and set the timer
+  // will need to iterate through the times and set the timer for each of the time, and for them to automatically display the next in the series
+
+  let countdown = times?.customTime;
 
   let timerComplete = false;
   let audio;
 
-  let now = Date.now();
-  let end = now + countdown * 1000;
+  let end = Date.now() + countdown * 1000;
 
-  $: count = Math.round((end - now) / 1000);
+  $: count = Math.round((end - Date.now()) / 1000);
   $: h = Math.floor(count / 3600);
   $: m = Math.floor((count - h * 3600) / 60);
   $: s = count - h * 3600 - m * 60;
 
+  let interval;
+
   function updateTimer() {
-    now = Date.now();
+    count = Math.round((end - Date.now()) / 1000);
+    if (count === 0) {
+      clearTimeout(interval);
+      audio.play();
+      timerComplete = true;
+    } else {
+      interval = setTimeout(updateTimer, 1000);
+    }
   }
 
-  let interval = setInterval(updateTimer, 1000);
-
-  $: if (count === 0) {
-    clearInterval(interval);
-    audio.play();
-    timerComplete = true;
-  }
+  interval = setTimeout(updateTimer, 1000);
 
   let isPaused;
   let isResetting;
@@ -43,14 +50,13 @@
   $: rotation.set((Math.max(count - 1, 0) / countdown) * 360);
 
   function handleNew() {
-    clearInterval(interval);
+    clearTimeout(interval);
     dispatch("new");
   }
 
   function handleStart() {
-    now = Date.now();
-    end = now + count * 1000;
-    interval = setInterval(updateTimer, 1000);
+    end = Date.now() + count * 1000;
+    interval = setTimeout(updateTimer, 1000);
     offset.set(Math.max(count - 1, 0) / countdown);
     rotation.set((Math.max(count - 1, 0) / countdown) * 360);
     isPaused = false;
@@ -59,31 +65,24 @@
   function handlePause() {
     offset.set(count / countdown);
     rotation.set((count / countdown) * 360);
-    clearInterval(interval);
+    clearTimeout(interval);
     isPaused = true;
   }
 
   function handleReset() {
-    clearInterval(interval);
+    clearTimeout(interval);
     timerComplete = false;
     isResetting = true;
     isPaused = false;
     Promise.all([offset.set(1), rotation.set(360)]).then(() => {
       isResetting = false;
-      now = Date.now();
-      end = now + countdown * 1000;
-      interval = setInterval(updateTimer, 1000);
+      end = Date.now() + countdown * 1000;
+      interval = setTimeout(updateTimer, 1000);
     });
   }
 
-  function padValue(value, length = 2, char = "0") {
-    const { length: currentLength } = value.toString();
-    if (currentLength >= length) return value.toString();
-    return `${char.repeat(length - currentLength)}${value}`;
-  }
-
   onDestroy(() => {
-    clearInterval(interval);
+    clearTimeout(interval);
   });
 </script>
 
@@ -91,7 +90,7 @@
   <audio src="alarm.wav" bind:this={audio}></audio>
   <h1 class="text-center py-8">
     {#if countdown > 60}
-      {countdown / 60} Minute Timer
+      {Math.floor(countdown / 60)} Minute Timer
     {:else}
       {Math.round(countdown)}s Timer
     {/if}
@@ -131,10 +130,9 @@
       <text x="-3" y="6.5">
         {#each Object.entries({ h, m, s }) as [key, value], i}
           {#if countdown >= 60 ** (2 - i)}
-            <tspan dx="3" font-weight="bold">{padValue(value)}</tspan><tspan
-              dx="0.5"
-              font-size="7">{key}</tspan
-            >
+            <tspan dx="3" font-weight="bold"
+              >{value.toString().padStart(2, "0")}</tspan
+            ><tspan dx="0.5" font-size="7">{key}</tspan>
           {/if}
         {/each}
       </text>
@@ -216,7 +214,9 @@
   </div>
   {#if timerComplete}
     <div class="text-center p-4 m-5 bg-red-300 text-teal-800 rounded-full">
-      <h2>Timer Complete!</h2>
+      <h2>Timer Complete</h2>
+      <!-- TODO: make this change based on what timer is is, for example if walking timer say walking over you can feel good about sitting now -->
+      <p>Get up and moving!</p>
     </div>
   {/if}
 </main>

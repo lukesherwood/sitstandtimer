@@ -1,22 +1,22 @@
 <script>
-  import Keypad from "./SetTime.svelte";
+  import SetTime from "./SetTime.svelte";
   import Timer from "./Timer.svelte";
 
-  let countdown;
+  let times;
 </script>
 
 <div class="p-4 w-full max-h-fit">
-  {#if countdown}
+  {#if times}
     <Timer
       on:new={() => {
-        countdown = null;
+        times = null;
       }}
-      {countdown}
+      {times}
     />
   {:else}
-    <Keypad
-      on:countdown={(e) => {
-        countdown = e.detail;
+    <SetTime
+      on:setTimer={(e) => {
+        times = e.detail;
       }}
     />
   {/if}

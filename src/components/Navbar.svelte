@@ -7,7 +7,7 @@
     <div class="flex justify-between items-center">
       <!-- Home button -->
       <div class="flex items-center">
-        <a href="/" class="flex items-center py-5 px-2 hover:text-gray-900">
+        <a href="/" class="flex items-center py-5 px-2 hover:text-amber-500">
           <svg
             class="h-6 w-6 mr-1"
             xmlns="http://www.w3.org/2000/svg"
@@ -26,7 +26,7 @@
         </a>
         <!-- Desktop Links - Shown inline with Home button on larger screens -->
         <div class="hidden md:flex space-x-4 items-center">
-          <a href="/about" class="py-2 px-3 font-bold hover:text-gray-900"
+          <a href="/about" class="py-2 px-3 font-bold hover:text-amber-500"
             >About</a
           >
         </div>
