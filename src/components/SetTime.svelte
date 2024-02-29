@@ -1,13 +1,7 @@
 <script>
-  import { createEventDispatcher } from "svelte";
+  import { times } from "../stores/timeStore.js";
   import Button from "./Button.svelte";
   import NumberInput from "./NumberInput.svelte";
-
-  const dispatch = createEventDispatcher();
-
-  function submitTime(times) {
-    dispatch("setTimer", times);
-  }
 
   let customTime = "";
   let walkingTime = 5;
@@ -15,11 +9,11 @@
   let sittingTime = 40;
 
   function handleSubmit() {
-    submitTime({
-      customTime: parseFloat(customTime * 60),
-      walkingTime: parseFloat(walkingTime * 60),
-      standingTime: parseFloat(standingTime * 60),
-      sittingTime: parseFloat(sittingTime * 60),
+    times.set({
+      customTime: parseFloat(customTime),
+      sittingTime: parseFloat(sittingTime),
+      standingTime: parseFloat(standingTime),
+      walkingTime: parseFloat(walkingTime),
     });
     customTime = "";
   }

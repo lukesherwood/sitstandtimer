@@ -7,17 +7,16 @@
 
   const dispatch = createEventDispatcher();
 
-  export let times;
-
-  // TODO: need to create a function that will take the times and set the timer
-  // will need to iterate through the times and set the timer for each of the time, and for them to automatically display the next in the series
-
-  let countdown = times?.customTime;
+  export let countdown;
+  export let type;
 
   let timerComplete = false;
   let audio;
 
-  let end = Date.now() + countdown * 1000;
+  $: end = Date.now() + countdown * 1000;
+
+  // now once countdown has been updated we need to start the timer
+  // if countdown changes need to reset the timer
 
   $: count = Math.round((end - Date.now()) / 1000);
   $: h = Math.floor(count / 3600);
@@ -32,6 +31,7 @@
       clearTimeout(interval);
       audio.play();
       timerComplete = true;
+      dispatch("complete");
     } else {
       interval = setTimeout(updateTimer, 1000);
     }
@@ -89,11 +89,7 @@
 <main class="text-red-100 max-w-sm mx-auto">
   <audio src="alarm.wav" bind:this={audio}></audio>
   <h1 class="text-center py-8">
-    {#if countdown > 60}
-      {Math.floor(countdown / 60)} Minute Timer
-    {:else}
-      {Math.round(countdown)}s Timer
-    {/if}
+    {type} Timer ({parseInt(countdown / 60)} minutes)
   </h1>
   <svg
     in:fly={{ y: -5 }}
