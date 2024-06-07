@@ -1,28 +1,28 @@
 <script>
-  import SetTime from "./SetTime.svelte";
-  import { times } from "../stores/timeStore.js";
-  import Timer from "./Timer.svelte";
+  import SetTime from "./SetTime.svelte"
+  import { times } from "../stores/timeStore.js"
+  import Timer from "./Timer.svelte"
 
-  let currentTimes;
+  let currentTimes
 
-  $: currentTimes;
+  $: currentTimes
 
   times.subscribe((value) => {
-    currentTimes = value;
-  });
+    currentTimes = value
+  })
 
-  $: timerType = null;
-  $: countdown = null;
+  $: timerType = null
+  $: countdown = null
 
   $: if (currentTimes.sittingTime > 0) {
-    countdown = currentTimes.sittingTime * 10;
-    timerType = "sittingTime";
+    countdown = currentTimes.sittingTime * 60
+    timerType = "sittingTime"
   } else if (currentTimes.standingTime > 0) {
-    countdown = currentTimes.standingTime * 60;
-    timerType = "standingTime";
+    countdown = currentTimes.standingTime * 60
+    timerType = "standingTime"
   } else if (currentTimes.walkingTime > 0) {
-    countdown = currentTimes.walkingTime * 60;
-    timerType = "walkingTime";
+    countdown = currentTimes.walkingTime * 60
+    timerType = "walkingTime"
   }
 </script>
 
@@ -31,10 +31,10 @@
     <Timer
       type={timerType}
       on:complete={() => {
-        times.set({ ...$times, [timerType]: 0 });
+        times.set({ ...$times, [timerType]: 0 })
       }}
       on:new={() => {
-        times.set({});
+        times.set({ ...$times, [timerType]: 0 })
       }}
       {countdown}
     />

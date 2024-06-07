@@ -1,89 +1,89 @@
 <script>
-  import { createEventDispatcher, onDestroy } from "svelte";
-  import { tweened } from "svelte/motion";
-  import { linear as easing } from "svelte/easing";
-  import { fly } from "svelte/transition";
-  import Button from "./Button.svelte";
+  import { createEventDispatcher, onDestroy } from "svelte"
+  import { tweened } from "svelte/motion"
+  import { linear as easing } from "svelte/easing"
+  import { fly } from "svelte/transition"
+  import Button from "./Button.svelte"
 
-  const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher()
 
-  export let countdown;
-  export let type;
+  export let countdown
+  export let type
 
-  let timerComplete = false;
-  let audio;
+  let timerComplete = false
+  let audio
 
-  $: end = Date.now() + countdown * 1000;
+  $: end = Date.now() + countdown * 1000
 
   // now once countdown has been updated we need to start the timer
   // if countdown changes need to reset the timer
 
-  $: count = Math.round((end - Date.now()) / 1000);
-  $: h = Math.floor(count / 3600);
-  $: m = Math.floor((count - h * 3600) / 60);
-  $: s = count - h * 3600 - m * 60;
+  $: count = Math.round((end - Date.now()) / 1000)
+  $: h = Math.floor(count / 3600)
+  $: m = Math.floor((count - h * 3600) / 60)
+  $: s = count - h * 3600 - m * 60
 
-  let interval;
+  let interval
 
   function updateTimer() {
-    count = Math.round((end - Date.now()) / 1000);
+    count = Math.round((end - Date.now()) / 1000)
     if (count === 0) {
-      clearTimeout(interval);
-      audio.play();
-      timerComplete = true;
-      dispatch("complete");
+      clearTimeout(interval)
+      audio.play()
+      timerComplete = true
+      dispatch("complete")
     } else {
-      interval = setTimeout(updateTimer, 1000);
+      interval = setTimeout(updateTimer, 1000)
     }
   }
 
-  interval = setTimeout(updateTimer, 1000);
+  interval = setTimeout(updateTimer, 1000)
 
-  let isPaused;
-  let isResetting;
-  const duration = 1000;
+  let isPaused
+  let isResetting
+  const duration = 1000
 
-  let offset = tweened(1, { duration, easing });
-  let rotation = tweened(360, { duration, easing });
+  let offset = tweened(1, { duration, easing })
+  let rotation = tweened(360, { duration, easing })
 
-  $: offset.set(Math.max(count - 1, 0) / countdown);
-  $: rotation.set((Math.max(count - 1, 0) / countdown) * 360);
+  $: offset.set(Math.max(count - 1, 0) / countdown)
+  $: rotation.set((Math.max(count - 1, 0) / countdown) * 360)
 
   function handleNew() {
-    clearTimeout(interval);
-    dispatch("new");
+    clearTimeout(interval)
+    dispatch("new")
   }
 
   function handleStart() {
-    end = Date.now() + count * 1000;
-    interval = setTimeout(updateTimer, 1000);
-    offset.set(Math.max(count - 1, 0) / countdown);
-    rotation.set((Math.max(count - 1, 0) / countdown) * 360);
-    isPaused = false;
+    end = Date.now() + count * 1000
+    interval = setTimeout(updateTimer, 1000)
+    offset.set(Math.max(count - 1, 0) / countdown)
+    rotation.set((Math.max(count - 1, 0) / countdown) * 360)
+    isPaused = false
   }
 
   function handlePause() {
-    offset.set(count / countdown);
-    rotation.set((count / countdown) * 360);
-    clearTimeout(interval);
-    isPaused = true;
+    offset.set(count / countdown)
+    rotation.set((count / countdown) * 360)
+    clearTimeout(interval)
+    isPaused = true
   }
 
   function handleReset() {
-    clearTimeout(interval);
-    timerComplete = false;
-    isResetting = true;
-    isPaused = false;
+    clearTimeout(interval)
+    timerComplete = false
+    isResetting = true
+    isPaused = false
     Promise.all([offset.set(1), rotation.set(360)]).then(() => {
-      isResetting = false;
-      end = Date.now() + countdown * 1000;
-      interval = setTimeout(updateTimer, 1000);
-    });
+      isResetting = false
+      end = Date.now() + countdown * 1000
+      interval = setTimeout(updateTimer, 1000)
+    })
   }
 
   onDestroy(() => {
-    clearTimeout(interval);
-  });
+    clearTimeout(interval)
+  })
 </script>
 
 <main class="text-red-100 max-w-sm mx-auto">

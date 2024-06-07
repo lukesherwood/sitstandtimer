@@ -1,5 +1,5 @@
 <script>
-  let isOpen = false;
+  let isOpen = false
 </script>
 
 <nav class="bg-teal-800 text-red-100 shadow-lg">

@@ -1,14 +1,14 @@
 <script>
-  import { fly } from "svelte/transition";
+  import { fly } from "svelte/transition"
 
-  export let value = "";
+  export let value = ""
 
   const select = (v) => {
-    if (v === 0 && !value) return;
-    if (value.length >= 6) return;
+    if (v === 0 && !value) return
+    if (value.length >= 6) return
 
-    value += v;
-  };
+    value += v
+  }
 </script>
 
 <form in:fly={{ y: -10, delay: 120 }} on:submit|preventDefault>

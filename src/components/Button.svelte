@@ -1,17 +1,17 @@
 <script>
-  import { createEventDispatcher } from "svelte";
-  const dispatch = createEventDispatcher();
-  export let tooltip;
-  export let disabled = false;
-  export let disabledText = "Disabled";
-  export let clazz = "";
-  export let type = "";
+  import { createEventDispatcher } from "svelte"
+  const dispatch = createEventDispatcher()
+  export let tooltip
+  export let disabled = false
+  export let disabledText = "Disabled"
+  export let clazz = ""
+  export let type = ""
 
-  let showTooltip = false;
+  let showTooltip = false
   function handleClick() {
-    dispatch("click");
+    dispatch("click")
   }
-  $: tooltipText = disabled ? disabledText : tooltip;
+  $: tooltipText = disabled ? disabledText : tooltip
 </script>
 
 <div class="relative flex flex-col items-center group">

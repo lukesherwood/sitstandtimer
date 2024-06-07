@@ -1,9 +1,9 @@
 <script>
-  export let value;
-  export let min = 0;
-  export let step = 1;
-  export let placeholder = "";
-  export let id = "";
+  export let value
+  export let min = 0
+  export let step = 1
+  export let placeholder = ""
+  export let id = ""
 </script>
 
 <input

@@ -1,21 +1,21 @@
 <script>
-  import { times } from "../stores/timeStore.js";
-  import Button from "./Button.svelte";
-  import NumberInput from "./NumberInput.svelte";
+  import { times } from "../stores/timeStore.js"
+  import Button from "./Button.svelte"
+  import NumberInput from "./NumberInput.svelte"
 
-  let customTime = "";
-  let walkingTime = 5;
-  let standingTime = 15;
-  let sittingTime = 40;
+  let customTime = ""
+  let walkingTime = 5
+  let standingTime = 15
+  let sittingTime = 40
 
   function handleSubmit() {
     times.set({
       customTime: parseFloat(customTime),
       sittingTime: parseFloat(sittingTime),
       standingTime: parseFloat(standingTime),
-      walkingTime: parseFloat(walkingTime),
-    });
-    customTime = "";
+      walkingTime: parseFloat(walkingTime)
+    })
+    customTime = ""
   }
 </script>
 
@@ -80,7 +80,7 @@
       <Button
         on:click={() =>
           submitTime({
-            customTime: parseFloat(0.16 * 60),
+            customTime: parseFloat(0.16 * 60)
           })}
         tooltip="New Timer"
         clazz="text-lg font-medium w-24 h-24 p-8"
@@ -90,7 +90,7 @@
       <Button
         on:click={() =>
           submitTime({
-            customTime: parseFloat(30 * 60),
+            customTime: parseFloat(30 * 60)
           })}
         tooltip="New Timer"
         clazz="text-lg font-medium w-24 h-24 p-8"
@@ -100,7 +100,7 @@
       <Button
         on:click={() =>
           submitTime({
-            customTime: parseFloat(50 * 60),
+            customTime: parseFloat(50 * 60)
           })}
         tooltip="New Timer"
         clazz="text-lg font-medium w-24 h-24 p-8"
@@ -110,7 +110,7 @@
       <Button
         on:click={() =>
           submitTime({
-            customTime: parseFloat(60 * 60),
+            customTime: parseFloat(60 * 60)
           })}
         tooltip="New Timer"
         clazz="text-lg font-medium w-24 h-24 p-8"

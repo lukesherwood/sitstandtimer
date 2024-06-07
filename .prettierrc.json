@@ -1,0 +1,10 @@
+{
+  "semi": false,
+  "useTabs": false,
+  "tabWidth": 2,
+  "endOfLine": "lf",
+  "overrides": [],
+  "svelteStrictMode": false,
+  "trailingComma": "none",
+  "plugins": ["prettier-plugin-svelte"]
+}
