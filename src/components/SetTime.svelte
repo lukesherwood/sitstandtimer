@@ -34,8 +34,8 @@
       <a
         target="_blank"
         href="https://www.fitnessmadeclear.com/blog-1/2019/5/11/dr-stu-mcgills-10-best-habits-for-a-healthy-back#:~:text=Avoid%20Prolonged%20Sitting&text=Dr%20McGill%20recommends%20adjusting%20your,walking%20for%20a%20few%20minutes."
-        >*</a
-      >
+        >*
+      </a>
     </small>
   </div>
   <section>

@@ -1,13 +1,11 @@
 <script>
   import SetTime from "./SetTime.svelte"
   import Timer from "./Timer.svelte"
-  import Button from "./Button.svelte"
   import {
     timerStore,
     resetTimer,
     completeCurrentTimer
   } from "../stores/timerStore.js"
-  import { onMount } from "svelte"
 
   let timerState
   let showTimer = false
