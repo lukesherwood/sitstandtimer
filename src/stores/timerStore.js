@@ -6,7 +6,8 @@ export const timerStore = writable({
   standingTime: "",
   walkingTime: "",
   needsReset: false,
-  allTimersComplete: false
+  allTimersComplete: false,
+  autoTransition: false
 })
 
 export function resetTimer() {
@@ -19,13 +20,11 @@ export function resetTimer() {
 function getNextTimer(state) {
   const timers = ["sitting", "standing", "walking"]
   const currentIndex = timers.indexOf(state.currentTimer)
-
-  for (let i = currentIndex + 1; i < timers.length; i++) {
-    if (state[`${timers[i]}Time`] > 0) {
-      return timers[i]
-    }
-  }
-  return null
+  return (
+    timers.find(
+      (timer, index) => index > currentIndex && state[`${timer}Time`] > 0
+    ) || null
+  )
 }
 
 export function completeCurrentTimer() {
@@ -39,5 +38,17 @@ export function completeCurrentTimer() {
       state.needsReset = false
     }
     return state
+  })
+}
+
+export function startNewTimer() {
+  timerStore.set({
+    currentTimer: "sitting",
+    sittingTime: 0,
+    standingTime: 0,
+    walkingTime: 0,
+    needsReset: false,
+    allTimersComplete: false,
+    autoTransition: false
   })
 }

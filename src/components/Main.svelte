@@ -4,7 +4,8 @@
   import {
     timerStore,
     resetTimer,
-    completeCurrentTimer
+    completeCurrentTimer,
+    startNewTimer
   } from "../stores/timerStore.js"
 
   let timerState
@@ -27,25 +28,23 @@
   }
 
   function handleNewTimer() {
-    timerStore.set({
-      currentTimer: "sitting",
-      sittingTime: "",
-      standingTime: "",
-      walkingTime: "",
-      needsReset: false,
-      allTimersComplete: false
-    })
+    startNewTimer()
     showTimer = false
+  }
+
+  function handleNextTimer() {
+    completeCurrentTimer()
   }
 </script>
 
 <div class="p-4 w-full max-h-fit">
   {#if showTimer}
-      <Timer
-        {timerState}
-        on:complete={handleComplete}
-        on:newTimer={handleNewTimer}
-      />
+    <Timer
+      {timerState}
+      on:complete={handleComplete}
+      on:newTimer={handleNewTimer}
+      on:nextTimer={handleNextTimer}
+    />
   {:else}
     <SetTime on:start={handleStart} />
   {/if}

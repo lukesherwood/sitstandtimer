@@ -9,6 +9,7 @@
   let walkingTime = ""
   let standingTime = ""
   let sittingTime = ""
+  let autoTransition = false
 
   $: isStartEnabled = walkingTime > 0 || standingTime > 0 || sittingTime > 0
 
@@ -16,11 +17,12 @@
     timerStore.set({
       currentTimer:
         sittingTime > 0 ? "sitting" : standingTime > 0 ? "standing" : "walking",
-      sittingTime: sittingTime * 60, // Convert to seconds
-      standingTime: standingTime * 60, // Convert to seconds
-      walkingTime: walkingTime * 60, // Convert to seconds
+      sittingTime: sittingTime * 10, // Change later to Convert to seconds
+      standingTime: standingTime * 10, // Change later to Convert to seconds
+      walkingTime: walkingTime * 10, // Change later to Convert to seconds
       needsReset: true,
-      allTimersComplete: false
+      allTimersComplete: false,
+      autoTransition: autoTransition
     })
     dispatch("start")
   }
@@ -69,6 +71,10 @@
               placeholder="5 mins"
               id="walkingTimeInput"
             />
+          </label>
+          <label>
+            <input type="checkbox" bind:checked={autoTransition} />
+            Automatic Transition
           </label>
           <Button
             type="submit"

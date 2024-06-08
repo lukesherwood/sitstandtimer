@@ -2,7 +2,9 @@
 
 ## TODO:
 
+- conditional message based on type of timer when timer is complete
+- make sure that when the last timer is complete, the message says session complete and next button is not visible (maybe something else instead)
 - custom time setting
-- change timer logic to work with an hour setting, to be more relevant to sit stand or more like pomodoro
+- quick time set
 - add context around sit/stand
 -

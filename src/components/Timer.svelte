@@ -32,7 +32,9 @@
         clearTimeout(interval)
         audio.play()
         timerComplete = true
-        dispatch("complete")
+        if (timerState.autoTransition) {
+          handleNextTimer()
+        }
       } else {
         interval = setTimeout(updateTimer, 1000)
       }
@@ -44,7 +46,7 @@
     timerComplete = false
     end = Date.now() + countdown * 1000
     interval = setTimeout(updateTimer, 1000)
-    timerState.needsReset = false // Reset needsReset so it can be set to true again by parent
+    timerState.needsReset = false
   }
 
   function handlePauseResume() {
@@ -52,12 +54,20 @@
     if (!isPaused) {
       end = Date.now() + count * 1000
       interval = setTimeout(updateTimer, 1000)
+    } else {
+      clearTimeout(interval)
     }
   }
 
   function handleNewTimer() {
     clearTimeout(interval)
     dispatch("newTimer")
+  }
+
+  function handleNextTimer() {
+    clearTimeout(interval)
+    dispatch("nextTimer")
+    timerComplete = false
   }
 
   let offset = tweened(1, { duration: 1000, easing })
@@ -181,10 +191,26 @@
       </svg>
     </Button>
   </div>
-  {#if timerComplete}
+  {#if timerComplete && !timerState.autoTransition}
     <div class="text-center p-4 m-5 bg-red-300 text-teal-800 rounded-full">
       <h2>Timer Complete</h2>
       <p>Get up and moving!</p>
     </div>
+    <Button on:click={handleNextTimer} tooltip="Next Timer">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        class="w-8 h-8"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M7 4.5l7.5 7.5-7.5 7.5M13 4.5l7.5 7.5-7.5 7.5"
+        />
+      </svg>
+    </Button>
   {/if}
 </main>
