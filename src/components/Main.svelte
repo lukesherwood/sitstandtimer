@@ -1,45 +1,39 @@
 <script>
   import SetTime from "./SetTime.svelte"
-  import { times } from "../stores/timeStore.js"
   import Timer from "./Timer.svelte"
+  import Button from "./Button.svelte"
+  import {
+    timerStore,
+    resetTimer,
+    completeCurrentTimer
+  } from "../stores/timerStore.js"
+  import { onMount } from "svelte"
 
-  let currentTimes
+  let timerState
+  let showTimer = false
 
-  $: currentTimes
-
-  times.subscribe((value) => {
-    currentTimes = value
+  timerStore.subscribe((value) => {
+    timerState = value
+    if (value.allTimersComplete) {
+      showTimer = false
+    }
   })
 
-  $: timerType = null
-  $: countdown = null
+  function handleComplete() {
+    completeCurrentTimer()
+  }
 
-  $: if (currentTimes.sittingTime > 0) {
-    countdown = currentTimes.sittingTime * 60
-    timerType = "sittingTime"
-  } else if (currentTimes.standingTime > 0) {
-    countdown = currentTimes.standingTime * 60
-    timerType = "standingTime"
-  } else if (currentTimes.walkingTime > 0) {
-    countdown = currentTimes.walkingTime * 60
-    timerType = "walkingTime"
+  function handleStart() {
+    showTimer = true
+    resetTimer()
   }
 </script>
 
 <div class="p-4 w-full max-h-fit">
-  {#if countdown}
-    <Timer
-      type={timerType}
-      on:complete={() => {
-        times.set({ ...$times, [timerType]: 0 })
-      }}
-      on:new={() => {
-        times.set({ ...$times, [timerType]: 0 })
-      }}
-      {countdown}
-    />
+  {#if showTimer}
+    <Timer {timerState} on:complete={handleComplete} />
   {:else}
-    <SetTime />
+    <SetTime on:start={handleStart} />
   {/if}
 </div>
 

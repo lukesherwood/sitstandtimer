@@ -7,79 +7,59 @@
 
   const dispatch = createEventDispatcher()
 
-  export let countdown
-  export let type
+  export let timerState
 
   let timerComplete = false
+  let isPaused = false
   let audio
+  let interval
 
+  $: countdown = timerState[`${timerState.currentTimer}Time`]
   $: end = Date.now() + countdown * 1000
-
-  // now once countdown has been updated we need to start the timer
-  // if countdown changes need to reset the timer
+  $: if (timerState.needsReset) {
+    handleReset()
+  }
 
   $: count = Math.round((end - Date.now()) / 1000)
   $: h = Math.floor(count / 3600)
   $: m = Math.floor((count - h * 3600) / 60)
   $: s = count - h * 3600 - m * 60
 
-  let interval
-
   function updateTimer() {
-    count = Math.round((end - Date.now()) / 1000)
-    if (count === 0) {
-      clearTimeout(interval)
-      audio.play()
-      timerComplete = true
-      dispatch("complete")
-    } else {
-      interval = setTimeout(updateTimer, 1000)
+    if (!isPaused) {
+      count = Math.round((end - Date.now()) / 1000)
+      if (count <= 0) {
+        clearTimeout(interval)
+        audio.play()
+        timerComplete = true
+        dispatch("complete")
+      } else {
+        interval = setTimeout(updateTimer, 1000)
+      }
     }
-  }
-
-  interval = setTimeout(updateTimer, 1000)
-
-  let isPaused
-  let isResetting
-  const duration = 1000
-
-  let offset = tweened(1, { duration, easing })
-  let rotation = tweened(360, { duration, easing })
-
-  $: offset.set(Math.max(count - 1, 0) / countdown)
-  $: rotation.set((Math.max(count - 1, 0) / countdown) * 360)
-
-  function handleNew() {
-    clearTimeout(interval)
-    dispatch("new")
-  }
-
-  function handleStart() {
-    end = Date.now() + count * 1000
-    interval = setTimeout(updateTimer, 1000)
-    offset.set(Math.max(count - 1, 0) / countdown)
-    rotation.set((Math.max(count - 1, 0) / countdown) * 360)
-    isPaused = false
-  }
-
-  function handlePause() {
-    offset.set(count / countdown)
-    rotation.set((count / countdown) * 360)
-    clearTimeout(interval)
-    isPaused = true
   }
 
   function handleReset() {
     clearTimeout(interval)
     timerComplete = false
-    isResetting = true
-    isPaused = false
-    Promise.all([offset.set(1), rotation.set(360)]).then(() => {
-      isResetting = false
-      end = Date.now() + countdown * 1000
-      interval = setTimeout(updateTimer, 1000)
-    })
+    end = Date.now() + countdown * 1000
+    interval = setTimeout(updateTimer, 1000)
+    timerState.needsReset = false // Reset needsReset so it can be set to true again by parent
   }
+
+  function handlePauseResume() {
+    isPaused = !isPaused
+    if (!isPaused) {
+      end = Date.now() + count * 1000
+      interval = setTimeout(updateTimer, 1000)
+    }
+  }
+
+  let offset = tweened(1, { duration: 1000, easing })
+  let rotation = tweened(360, { duration: 1000, easing })
+
+  $: offset.set(Math.max(count - 1, 0) / countdown)
+  $: rotation.set((Math.max(count - 1, 0) / countdown) * 360)
 
   onDestroy(() => {
     clearTimeout(interval)
@@ -89,7 +69,7 @@
 <main class="text-red-100 max-w-sm mx-auto">
   <audio src="alarm.wav" bind:this={audio}></audio>
   <h1 class="text-center py-8">
-    {type} Timer ({parseInt(countdown / 60)} minutes)
+    {timerState.currentTimer} Timer ({parseInt(countdown / 60)} minutes)
   </h1>
   <svg
     in:fly={{ y: -5 }}
@@ -135,62 +115,6 @@
     </g>
   </svg>
   <div class="flex justify-between items-center m-6">
-    <Button on:click={handleNew} tooltip="New Timer">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        class="w-8 h-8"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M12 4.5v15m7.5-7.5h-15"
-        />
-      </svg>
-    </Button>
-    {#if isPaused}
-      <Button
-        disabled={isResetting || count === 0}
-        on:click={handleStart}
-        tooltip="Start Timer"
-        clazz="w-24 h-24"
-      >
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="w-8 h-8"
-        >
-          <polygon points="5 3 19 12 5 21 5 3"></polygon>
-        </svg>
-      </Button>
-    {:else}
-      <Button
-        disabled={isResetting || count === 0}
-        on:click={handlePause}
-        tooltip="Pause Timer"
-        clazz="w-24 h-24"
-      >
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="w-8 h-8"
-        >
-          <rect x="6" y="4" width="4" height="16"></rect>
-          <rect x="14" y="4" width="4" height="16"></rect>
-        </svg>
-      </Button>
-    {/if}
     <Button on:click={handleReset} tooltip="Reset Timer">
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -207,11 +131,41 @@
         />
       </svg>
     </Button>
+    <Button
+      on:click={handlePauseResume}
+      tooltip={isPaused ? "Resume Timer" : "Pause Timer"}
+    >
+      {#if isPaused}
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="w-8 h-8"
+        >
+          <polygon points="5 3 19 12 5 21 5 3"></polygon>
+        </svg>
+      {:else}
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="w-8 h-8"
+        >
+          <rect x="6" y="4" width="4" height="16"></rect>
+          <rect x="14" y="4" width="4" height="16"></rect>
+        </svg>
+      {/if}
+    </Button>
   </div>
   {#if timerComplete}
     <div class="text-center p-4 m-5 bg-red-300 text-teal-800 rounded-full">
       <h2>Timer Complete</h2>
-      <!-- TODO: make this change based on what timer is is, for example if walking timer say walking over you can feel good about sitting now -->
       <p>Get up and moving!</p>
     </div>
   {/if}
