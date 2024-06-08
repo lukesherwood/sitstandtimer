@@ -25,11 +25,27 @@
     showTimer = true
     resetTimer()
   }
+
+  function handleNewTimer() {
+    timerStore.set({
+      currentTimer: "sitting",
+      sittingTime: "",
+      standingTime: "",
+      walkingTime: "",
+      needsReset: false,
+      allTimersComplete: false
+    })
+    showTimer = false
+  }
 </script>
 
 <div class="p-4 w-full max-h-fit">
   {#if showTimer}
-    <Timer {timerState} on:complete={handleComplete} />
+      <Timer
+        {timerState}
+        on:complete={handleComplete}
+        on:newTimer={handleNewTimer}
+      />
   {:else}
     <SetTime on:start={handleStart} />
   {/if}

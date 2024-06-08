@@ -55,6 +55,11 @@
     }
   }
 
+  function handleNewTimer() {
+    clearTimeout(interval)
+    dispatch("newTimer")
+  }
+
   let offset = tweened(1, { duration: 1000, easing })
   let rotation = tweened(360, { duration: 1000, easing })
 
@@ -140,9 +145,6 @@
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
           class="w-8 h-8"
         >
           <polygon points="5 3 19 12 5 21 5 3"></polygon>
@@ -161,6 +163,22 @@
           <rect x="14" y="4" width="4" height="16"></rect>
         </svg>
       {/if}
+    </Button>
+    <Button on:click={handleNewTimer} tooltip="New Timer">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="w-8 h-8"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M12 4.5v15m7.5-7.5h-15"
+        />
+      </svg>
     </Button>
   </div>
   {#if timerComplete}
