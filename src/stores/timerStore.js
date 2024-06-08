@@ -16,28 +16,25 @@ export function resetTimer() {
   })
 }
 
+function getNextTimer(state) {
+  const timers = ["sitting", "standing", "walking"]
+  const currentIndex = timers.indexOf(state.currentTimer)
+
+  for (let i = currentIndex + 1; i < timers.length; i++) {
+    if (state[`${timers[i]}Time`] > 0) {
+      return timers[i]
+    }
+  }
+  return null
+}
+
 export function completeCurrentTimer() {
   timerStore.update((state) => {
-    if (state.currentTimer === "sitting") {
-      if (state.standingTime > 0) {
-        state.currentTimer = "standing"
-        state.needsReset = true
-      } else if (state.walkingTime > 0) {
-        state.currentTimer = "walking"
-        state.needsReset = true
-      } else {
-        state.allTimersComplete = true
-        state.needsReset = false
-      }
-    } else if (state.currentTimer === "standing") {
-      if (state.walkingTime > 0) {
-        state.currentTimer = "walking"
-        state.needsReset = true
-      } else {
-        state.allTimersComplete = true
-        state.needsReset = false
-      }
-    } else if (state.currentTimer === "walking") {
+    const nextTimer = getNextTimer(state)
+    if (nextTimer) {
+      state.currentTimer = nextTimer
+      state.needsReset = true
+    } else {
       state.allTimersComplete = true
       state.needsReset = false
     }
