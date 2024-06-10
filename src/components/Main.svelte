@@ -37,7 +37,7 @@
   }
 </script>
 
-<div class="p-4 w-full max-h-fit">
+<div class="pt-5 w-full max-h-fit">
   {#if showTimer}
     <Timer
       {timerState}

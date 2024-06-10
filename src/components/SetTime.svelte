@@ -29,61 +29,81 @@
 </script>
 
 <div>
-  <div class="pb-6 text-center">
+  <div class="text-center">
     <h2>Select Timer Duration</h2>
-    <small>
-      It is recommended that you get up and stand at least every 50 minutes
-      <a
-        target="_blank"
-        href="https://www.fitnessmadeclear.com/blog-1/2019/5/11/dr-stu-mcgills-10-best-habits-for-a-healthy-back#:~:text=Avoid%20Prolonged%20Sitting&text=Dr%20McGill%20recommends%20adjusting%20your,walking%20for%20a%20few%20minutes."
-        >*
-      </a>
-    </small>
   </div>
   <section>
-    <div>
-      <h3 class="text-center">Sit, Stand, Walk Timer (minutes)</h3>
-      <div class="p-4 flex flex-col md:flex-row justify-center gap-5">
+    <div class="text-center">
+      <small>
+        It is recommended that you get up and stand at least every 50 minutes
+        <a
+          target="_blank"
+          href="https://www.fitnessmadeclear.com/blog-1/2019/5/11/dr-stu-mcgills-10-best-habits-for-a-healthy-back#:~:text=Avoid%20Prolonged%20Sitting&text=Dr%20McGill%20recommends%20adjusting%20your,walking%20for%20a%20few%20minutes."
+          >*
+        </a>
+      </small>
+      <div class="flex items-center mt-4 md:mt-0 w-full justify-center pt-5">
+        <label for="autoTransition" class="text-center px-2"
+          >Automatic timer start
+        </label>
+        <input
+          type="checkbox"
+          bind:checked={autoTransition}
+          id="autoTransition"
+          class="w-4 h-4"
+        />
+      </div>
+      <div
+        class="p-4 flex flex-col md:flex-row justify-center items-center gap-5"
+      >
         <form
-          class="flex flex-col md:flex-row justify-center gap-5"
+          class="flex flex-col md:flex-row justify-center items-center gap-5"
           on:submit|preventDefault={handleSubmit}
         >
-          <label for="sittingTimeInput">
-            Sitting
+          <div class="flex flex-col items-center">
+            <label for="sittingTimeInput" class="text-center mb-2"
+              >Sitting</label
+            >
             <NumberInput
               bind:value={sittingTime}
               placeholder="40 mins"
               id="sittingTimeInput"
+              class="text-center"
             />
-          </label>
-          <label for="standingTimeInput">
-            Standing
+          </div>
+          <div class="flex flex-col items-center">
+            <label for="standingTimeInput" class="text-center mb-2"
+              >Standing</label
+            >
             <NumberInput
               bind:value={standingTime}
               placeholder="15 mins"
               id="standingTimeInput"
+              class="text-center"
             />
-          </label>
-          <label for="walkingTimeInput">
-            Walking
+          </div>
+          <div class="flex flex-col items-center">
+            <label for="walkingTimeInput" class="text-center mb-2"
+              >Walking</label
+            >
             <NumberInput
               bind:value={walkingTime}
               placeholder="5 mins"
               id="walkingTimeInput"
+              class="text-center"
             />
-          </label>
-          <label>
-            <input type="checkbox" bind:checked={autoTransition} />
-            Automatic Transition
-          </label>
-          <Button
-            type="submit"
-            tooltip="Set Custom Timer"
-            clazz="text-lg text-medium w-24 h-24 p-8"
-            disabled={!isStartEnabled}
-          >
-            Start Timer
-          </Button>
+          </div>
+          <div class="flex flex-col items-center">
+            <div class="text-center mb-2 text-teal-500">Submit</div>
+            <Button
+              type="submit"
+              tooltip="Set Custom Timer"
+              clazz="text-lg text-medium w-24 h-24 p-8"
+              disabled={!isStartEnabled}
+            >
+              Start Timer
+            </Button>
+          </div>
         </form>
       </div>
     </div>
