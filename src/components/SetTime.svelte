@@ -17,9 +17,9 @@
     timerStore.set({
       currentTimer:
         sittingTime > 0 ? "sitting" : standingTime > 0 ? "standing" : "walking",
-      sittingTime: sittingTime * 10, // Change later to Convert to seconds
-      standingTime: standingTime * 10, // Change later to Convert to seconds
-      walkingTime: walkingTime * 10, // Change later to Convert to seconds
+      sittingTime: sittingTime * 60,
+      standingTime: standingTime * 60,
+      walkingTime: walkingTime * 60,
       needsReset: true,
       allTimersComplete: false,
       autoTransition: autoTransition
