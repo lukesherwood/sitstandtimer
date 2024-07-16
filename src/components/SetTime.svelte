@@ -97,7 +97,7 @@
             <div class="text-center mb-2 text-teal-500">Submit</div>
             <Button
               type="submit"
-              tooltip="Set Custom Timer"
+              disabledText="Fill out the timer"
               clazz="text-lg text-medium w-24 h-24 p-8"
               disabled={!isStartEnabled}
             >
