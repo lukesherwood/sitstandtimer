@@ -23,6 +23,7 @@
     on:blur={() => (showTooltip = false)}
     on:click={handleClick}
     {disabled}
+    data-testid="button"
   >
     <slot />
   </button>
@@ -30,6 +31,7 @@
   {#if showTooltip && tooltipText}
     <div
       class="absolute bottom-full mb-2 w-32 bg-black text-white text-sm text-center rounded p-2 shadow-md"
+      data-testid="tooltip"
     >
       {tooltipText}
     </div>

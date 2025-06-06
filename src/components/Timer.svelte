@@ -106,9 +106,9 @@
   })
 </script>
 
-<main class="text-red-100 max-w-sm mx-auto">
-  <audio src="alarm.wav" bind:this={audio}></audio>
-  <h1 class="text-center py-8">
+<main class="text-red-100 max-w-sm mx-auto" data-testid="timer">
+  <audio src="alarm.wav" bind:this={audio} data-testid="timer-audio"></audio>
+  <h1 class="text-center py-8" data-testid="timer-title">
     {timerState.currentTimer} Timer ({parseInt(countdown / 60)} minutes)
   </h1>
   <svg
@@ -117,6 +117,7 @@
     width="250"
     height="250"
     class="mx-auto"
+    data-testid="timer-circle"
   >
     <title>Remaining seconds: {count}</title>
     <g fill="none" stroke="currentColor" stroke-width="2">
@@ -155,7 +156,8 @@
     </g>
   </svg>
   <div class="flex justify-between items-center m-6">
-    <Button on:click={handleReset} tooltip="Reset Timer">
+    <div data-testid="reset-button">
+      <Button on:click={handleReset} tooltip="Reset Timer">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -170,11 +172,13 @@
           d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
         />
       </svg>
-    </Button>
-    <Button
-      on:click={handlePauseResume}
-      tooltip={isPaused ? "Resume Timer" : "Pause Timer"}
-    >
+      </Button>
+    </div>
+    <div data-testid="pause-resume-button">
+      <Button
+        on:click={handlePauseResume}
+        tooltip={isPaused ? "Resume Timer" : "Pause Timer"}
+      >
       {#if isPaused}
         <svg
           viewBox="0 0 24 24"
@@ -198,8 +202,10 @@
           <rect x="14" y="4" width="4" height="16"></rect>
         </svg>
       {/if}
-    </Button>
-    <Button on:click={handleNewTimer} tooltip="New Timer">
+      </Button>
+    </div>
+    <div data-testid="new-timer-button">
+      <Button on:click={handleNewTimer} tooltip="New Timer">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -214,14 +220,16 @@
           d="M12 4.5v15m7.5-7.5h-15"
         />
       </svg>
-    </Button>
+      </Button>
+    </div>
   </div>
   {#if timerComplete}
     {#if isLastTimer}
-      <div class="text-center p-4 m-5 bg-green-300 text-teal-800 rounded-full">
+      <div class="text-center p-4 m-5 bg-green-300 text-teal-800 rounded-full" data-testid="all-complete-message">
         <h2>Well done, all timers completed. Start again?</h2>
       </div>
-      <Button on:click={handleResetAllTimers} tooltip="Reset All Timers">
+      <div data-testid="reset-all-button">
+        <Button on:click={handleResetAllTimers} tooltip="Reset All Timers">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -236,9 +244,10 @@
             d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
           />
         </svg>
-      </Button>
+        </Button>
+      </div>
     {:else}
-      <div class="text-center p-4 m-5 bg-red-300 text-teal-800 rounded-full">
+      <div class="text-center p-4 m-5 bg-red-300 text-teal-800 rounded-full" data-testid="timer-complete-message">
         <h2>{timerState.currentTimer.charAt(0).toUpperCase() + timerState.currentTimer.slice(1)} Timer Complete!</h2>
         <p>
           {#if timerState.currentTimer === 'sitting'}
@@ -254,7 +263,8 @@
         </p>
       </div>
       {#if !timerState.autoTransition}
-        <Button on:click={handleNextTimer} tooltip="Next Timer">
+        <div data-testid="next-timer-button">
+          <Button on:click={handleNextTimer} tooltip="Next Timer">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
@@ -270,6 +280,7 @@
             />
           </svg>
           </Button>
+        </div>
       {/if}
     {/if}
   {/if}

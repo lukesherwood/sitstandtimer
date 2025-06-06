@@ -11,14 +11,14 @@
   }
 </script>
 
-<form in:fly={{ y: -10, delay: 120 }} on:submit|preventDefault>
+<form in:fly={{ y: -10, delay: 120 }} on:submit|preventDefault data-testid="number-pad">
   {#each Array(10).fill() as _, i}
-    <button type="button" on:click={() => select(i)}>
+    <button type="button" on:click={() => select(i)} data-testid="digit-{i}">
       {i}
     </button>
   {/each}
 
-  <button disabled={!value} type="submit">
+  <button disabled={!value} type="submit" data-testid="start-button">
     <span class="visually-hidden">Start timer</span>
     <svg viewBox="-50 -50 100 100" width="30" height="30">
       <g

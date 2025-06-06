@@ -28,7 +28,7 @@
   }
 </script>
 
-<div>
+<div data-testid="set-time">
   <div class="text-center">
     <h2>Select Timer Duration</h2>
   </div>
@@ -51,6 +51,7 @@
           bind:checked={autoTransition}
           id="autoTransition"
           class="w-4 h-4"
+          data-testid="auto-transition-checkbox"
         />
       </div>
       <div
@@ -59,50 +60,57 @@
         <form
           class="flex flex-col md:flex-row justify-center items-center gap-5"
           on:submit|preventDefault={handleSubmit}
+          data-testid="timer-form"
         >
           <div class="flex flex-col items-center">
             <label for="sittingTimeInput" class="text-center mb-2"
               >Sitting</label
             >
-            <NumberInput
-              bind:value={sittingTime}
-              placeholder="40 mins"
-              id="sittingTimeInput"
-              class="text-center"
-            />
+            <div data-testid="sitting-input">
+              <NumberInput
+                bind:value={sittingTime}
+                placeholder="40 mins"
+                id="sittingTimeInput"
+              />
+            </div>
           </div>
           <div class="flex flex-col items-center">
             <label for="standingTimeInput" class="text-center mb-2"
               >Standing</label
             >
-            <NumberInput
-              bind:value={standingTime}
-              placeholder="15 mins"
-              id="standingTimeInput"
-              class="text-center"
-            />
+            <div data-testid="standing-input">
+              <NumberInput
+                bind:value={standingTime}
+                placeholder="15 mins"
+                id="standingTimeInput"
+              />
+            </div>
           </div>
           <div class="flex flex-col items-center">
             <label for="walkingTimeInput" class="text-center mb-2"
               >Walking</label
             >
-            <NumberInput
-              bind:value={walkingTime}
-              placeholder="5 mins"
-              id="walkingTimeInput"
-              class="text-center"
-            />
+            <div data-testid="walking-input">
+              <NumberInput
+                bind:value={walkingTime}
+                placeholder="5 mins"
+                id="walkingTimeInput"
+              />
+            </div>
           </div>
           <div class="flex flex-col items-center">
             <div class="text-center mb-2 text-teal-500">Submit</div>
-            <Button
-              type="submit"
-              disabledText="Fill out the timer"
-              clazz="text-lg text-medium w-24 h-24 p-8"
-              disabled={!isStartEnabled}
-            >
-              Start Timer
-            </Button>
+            <div data-testid="start-timer-button">
+              <Button
+                type="submit"
+                tooltip="Start Timer"
+                disabledText="Fill out the timer"
+                clazz="text-lg text-medium w-24 h-24 p-8"
+                disabled={!isStartEnabled}
+              >
+                Start Timer
+              </Button>
+            </div>
           </div>
         </form>
       </div>
