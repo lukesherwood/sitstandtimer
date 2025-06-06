@@ -5,7 +5,6 @@
   export let disabled = false
   export let disabledText = "Disabled"
   export let clazz = ""
-  export let type = ""
 
   let showTooltip = false
   function handleClick() {
