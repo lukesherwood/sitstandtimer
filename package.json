@@ -7,8 +7,12 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro", 
-    "format": "prettier --write 'src/**/*.svelte' 'src/**/*.js'"
+    "astro": "astro",
+    "format": "prettier --write 'src/**/*.svelte' 'src/**/*.js'",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@astrojs/svelte": "^5.0.3",
@@ -18,9 +22,13 @@
     "tailwindcss": "^3.4.0"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/svelte": "^5.2.8",
     "eslint": "^9.4.0",
     "eslint-plugin-astro": "^1.2.0",
     "eslint-plugin-svelte": "^2.39.0",
-    "prettier-plugin-svelte": "^3.2.4"
+    "jsdom": "^26.1.0",
+    "prettier-plugin-svelte": "^3.2.4",
+    "vitest": "^3.2.2"
   }
 }

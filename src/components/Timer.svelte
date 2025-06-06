@@ -24,6 +24,15 @@
   $: h = Math.floor(count / 3600)
   $: m = Math.floor((count - h * 3600) / 60)
   $: s = count - h * 3600 - m * 60
+  
+  // Check if this is the last timer that has time set
+  $: isLastTimer = (() => {
+    const timers = ["sitting", "standing", "walking"]
+    const currentIndex = timers.indexOf(timerState.currentTimer)
+    return !timers.find(
+      (timer, index) => index > currentIndex && timerState[`${timer}Time`] > 0
+    )
+  })()
 
   function updateTimer() {
     if (!isPaused) {
@@ -32,8 +41,19 @@
         clearTimeout(interval)
         audio.play()
         timerComplete = true
+        
+        // Check if this is the last timer
+        const timers = ["sitting", "standing", "walking"]
+        const currentIndex = timers.indexOf(timerState.currentTimer)
+        const hasNextTimer = timers.find(
+          (timer, index) => index > currentIndex && timerState[`${timer}Time`] > 0
+        )
+        
         if (timerState.autoTransition) {
-          handleNextTimer()
+          // Show message briefly before auto-transitioning
+          setTimeout(() => {
+            handleNextTimer()
+          }, 10000) // 10 second delay to show completion message
         }
       } else {
         interval = setTimeout(updateTimer, 1000)
@@ -60,6 +80,11 @@
   }
 
   function handleNewTimer() {
+    clearTimeout(interval)
+    dispatch("newTimer")
+  }
+
+  function handleResetAllTimers() {
     clearTimeout(interval)
     dispatch("newTimer")
   }
@@ -191,26 +216,61 @@
       </svg>
     </Button>
   </div>
-  {#if timerComplete && !timerState.autoTransition}
-    <div class="text-center p-4 m-5 bg-red-300 text-teal-800 rounded-full">
-      <h2>Timer Complete</h2>
-      <p>Get up and moving!</p>
-    </div>
-    <Button on:click={handleNextTimer} tooltip="Next Timer">
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        class="w-8 h-8"
-      >
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          d="M7 4.5l7.5 7.5-7.5 7.5M13 4.5l7.5 7.5-7.5 7.5"
-        />
-      </svg>
-    </Button>
+  {#if timerComplete}
+    {#if isLastTimer}
+      <div class="text-center p-4 m-5 bg-green-300 text-teal-800 rounded-full">
+        <h2>Well done, all timers completed. Start again?</h2>
+      </div>
+      <Button on:click={handleResetAllTimers} tooltip="Reset All Timers">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="w-8 h-8"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
+          />
+        </svg>
+      </Button>
+    {:else}
+      <div class="text-center p-4 m-5 bg-red-300 text-teal-800 rounded-full">
+        <h2>{timerState.currentTimer.charAt(0).toUpperCase() + timerState.currentTimer.slice(1)} Timer Complete!</h2>
+        <p>
+          {#if timerState.currentTimer === 'sitting'}
+            Time to stand up and move!
+          {:else if timerState.currentTimer === 'standing'}
+            Great! Time for the next activity.
+          {:else if timerState.currentTimer === 'walking'}
+            Well done! Time to continue.
+          {/if}
+          {#if timerState.autoTransition}
+            <br><small>Automatically moving to next timer...</small>
+          {/if}
+        </p>
+      </div>
+      {#if !timerState.autoTransition}
+        <Button on:click={handleNextTimer} tooltip="Next Timer">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            class="w-8 h-8"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M7 4.5l7.5 7.5-7.5 7.5M13 4.5l7.5 7.5-7.5 7.5"
+            />
+          </svg>
+          </Button>
+      {/if}
+    {/if}
   {/if}
 </main>
