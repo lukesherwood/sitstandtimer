@@ -1,20 +1,81 @@
 <script>
-  import { timerStore } from "../stores/timerStore.js"
+  import {
+    timerStore,
+    saveLastUsedTimes,
+    updatePreferences
+  } from "../stores/timerStore.js"
   import Button from "./Button.svelte"
   import NumberInput from "./NumberInput.svelte"
-  import { createEventDispatcher } from "svelte"
+  import { createEventDispatcher, onMount } from "svelte"
+  import { requestNotificationPermission } from "../lib/notifications.js"
 
   const dispatch = createEventDispatcher()
 
-  let walkingTime = 0
-  let standingTime = 0
-  let sittingTime = 0
+  let walkingTime = ""
+  let standingTime = ""
+  let sittingTime = ""
   let autoTransition = false
+  let notificationSettings = {
+    browser: false,
+    audio: true,
+    visual: true
+  }
+  let notificationSettingsExpanded = false
+
+  // Load saved preferences on mount
+  onMount(() => {
+    const unsubscribe = timerStore.subscribe((state) => {
+      if (state.preferences) {
+        sittingTime = state.preferences.lastUsedSitting || ""
+        standingTime = state.preferences.lastUsedStanding || ""
+        walkingTime = state.preferences.lastUsedWalking || ""
+        autoTransition = state.preferences.autoTransition || false
+      }
+      if (state.notifications) {
+        notificationSettings = { ...state.notifications }
+      }
+    })
+    return unsubscribe
+  })
 
   $: isStartEnabled = walkingTime > 0 || standingTime > 0 || sittingTime > 0
 
+  async function handleBrowserNotificationToggle() {
+    if (
+      notificationSettings.browser &&
+      !("Notification" in window || Notification.permission === "granted")
+    ) {
+      const granted = await requestNotificationPermission()
+      if (!granted) {
+        notificationSettings.browser = false
+        return
+      }
+    }
+
+    timerStore.update((state) => ({
+      ...state,
+      notifications: {
+        ...state.notifications,
+        browser: notificationSettings.browser
+      }
+    }))
+  }
+
+  function updateNotificationSetting(key, value) {
+    notificationSettings[key] = value
+    timerStore.update((state) => ({
+      ...state,
+      notifications: { ...state.notifications, [key]: value }
+    }))
+  }
+
   function handleSubmit() {
-    timerStore.set({
+    // Save current timer values as last used
+    saveLastUsedTimes(sittingTime, standingTime, walkingTime)
+    updatePreferences({ autoTransition })
+
+    timerStore.update((state) => ({
+      ...state,
       currentTimer:
         sittingTime > 0 ? "sitting" : standingTime > 0 ? "standing" : "walking",
       sittingTime: sittingTime * 60,
@@ -23,7 +84,7 @@
       needsReset: true,
       allTimersComplete: false,
       autoTransition: autoTransition
-    })
+    }))
     dispatch("start")
   }
 </script>
@@ -42,6 +103,73 @@
           >*
         </a>
       </small>
+      <!-- Notification Settings -->
+      <div
+        class="bg-teal-600 bg-opacity-20 rounded-lg mt-4 mb-4 border border-teal-300"
+      >
+        <button
+          type="button"
+          class="w-full p-4 text-left flex items-center justify-between hover:bg-opacity-30 hover:bg-teal-600 rounded-lg transition-colors"
+          on:click={() => notificationSettingsExpanded = !notificationSettingsExpanded}
+        >
+          <h3 class="text-sm font-semibold">Notification Settings</h3>
+          <svg
+            class="w-4 h-4 transition-transform duration-200 {notificationSettingsExpanded ? 'rotate-180' : ''}"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        
+        {#if notificationSettingsExpanded}
+          <div class="px-4 pb-4 border-t border-teal-300 border-opacity-30 pt-3">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="flex items-center">
+                <input
+                  type="checkbox"
+                  bind:checked={notificationSettings.browser}
+                  on:change={handleBrowserNotificationToggle}
+                  id="browserNotifications"
+                  class="w-4 h-4 mr-2"
+                />
+                <label for="browserNotifications" class="text-sm"
+                  >Browser Notifications</label
+                >
+              </div>
+              <div class="flex items-center">
+                <input
+                  type="checkbox"
+                  bind:checked={notificationSettings.audio}
+                  on:change={() =>
+                    updateNotificationSetting("audio", notificationSettings.audio)}
+                  id="audioNotifications"
+                  class="w-4 h-4 mr-2"
+                />
+                <label for="audioNotifications" class="text-sm">Audio Alerts</label>
+              </div>
+              <div class="flex items-center">
+                <input
+                  type="checkbox"
+                  bind:checked={notificationSettings.visual}
+                  on:change={() =>
+                    updateNotificationSetting(
+                      "visual",
+                      notificationSettings.visual
+                    )}
+                  id="visualNotifications"
+                  class="w-4 h-4 mr-2"
+                />
+                <label for="visualNotifications" class="text-sm"
+                  >Visual Alerts</label
+                >
+              </div>
+            </div>
+          </div>
+        {/if}
+      </div>
+
       <div class="flex items-center mt-4 md:mt-0 w-full justify-center pt-5">
         <label for="autoTransition" class="text-center px-2"
           >Automatic timer start

@@ -1,14 +1,25 @@
 <script>
-  import SetTime from "./SetTime.svelte"
-  import Timer from "./Timer.svelte"
+  import SetTime from "../components/SetTime.svelte"
+  import Timer from "../components/Timer.svelte"
   import {
     timerStore,
     resetTimer,
     completeCurrentTimer,
     startNewTimer
   } from "../stores/timerStore.js"
+  import { initializePWA } from "./pwa.js"
+  import { showVisualAlert } from "./notifications.js"
+  import { onMount } from "svelte"
 
   let showTimer = false
+
+  onMount(() => {
+    // Initialize PWA features
+    initializePWA()
+    
+    // Make notification functions globally available
+    window.showVisualAlert = showVisualAlert
+  })
 
   $: if ($timerStore.allTimersComplete) {
     showTimer = false

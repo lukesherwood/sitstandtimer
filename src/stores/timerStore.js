@@ -1,13 +1,76 @@
 import { writable } from "svelte/store"
 
-export const timerStore = writable({
+// Local storage helpers
+function loadFromStorage() {
+  if (typeof window !== 'undefined') {
+    const stored = localStorage.getItem('sitstand-timer-data')
+    if (stored) {
+      try {
+        return JSON.parse(stored)
+      } catch (e) {
+        console.warn('Failed to parse stored timer data:', e)
+      }
+    }
+  }
+  return null
+}
+
+function saveToStorage(data) {
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.setItem('sitstand-timer-data', JSON.stringify(data))
+    } catch (e) {
+      console.warn('Failed to save timer data:', e)
+    }
+  }
+}
+
+// Default state
+const defaultState = {
   currentTimer: "sitting",
   sittingTime: 0,
   standingTime: 0,
   walkingTime: 0,
   needsReset: false,
   allTimersComplete: false,
-  autoTransition: false
+  autoTransition: false,
+  notifications: {
+    browser: false,
+    audio: true,
+    visual: true
+  },
+  preferences: {
+    lastUsedSitting: 0,
+    lastUsedStanding: 0,
+    lastUsedWalking: 0,
+    autoTransition: false
+  },
+  stats: {
+    totalSessions: 0,
+    totalSittingTime: 0,
+    totalStandingTime: 0,
+    totalWalkingTime: 0,
+    lastUsed: null
+  }
+}
+
+// Initialize store with saved data or defaults
+const initialState = {
+  ...defaultState,
+  ...loadFromStorage()
+}
+
+export const timerStore = writable(initialState)
+
+// Auto-save to localStorage on updates
+timerStore.subscribe((state) => {
+  // Only save persistent data, not runtime state
+  const persistentData = {
+    notifications: state.notifications,
+    preferences: state.preferences,
+    stats: state.stats
+  }
+  saveToStorage(persistentData)
 })
 
 export function resetTimer() {
@@ -30,30 +93,77 @@ function getNextTimer(state) {
 export function completeCurrentTimer() {
   timerStore.update((state) => {
     const nextTimer = getNextTimer(state)
+    
+    // Update stats
+    const timerType = state.currentTimer
+    const timeCompleted = state[`${timerType}Time`]
+    const updatedStats = {
+      ...state.stats,
+      [`total${timerType.charAt(0).toUpperCase() + timerType.slice(1)}Time`]: 
+        state.stats[`total${timerType.charAt(0).toUpperCase() + timerType.slice(1)}Time`] + timeCompleted,
+      lastUsed: new Date().toISOString()
+    }
+    
     if (nextTimer) {
       return {
         ...state,
         currentTimer: nextTimer,
-        needsReset: true
+        needsReset: true,
+        stats: updatedStats
       }
     } else {
       return {
         ...state,
         allTimersComplete: true,
-        needsReset: false
+        needsReset: false,
+        stats: {
+          ...updatedStats,
+          totalSessions: updatedStats.totalSessions + 1
+        }
       }
     }
   })
 }
 
 export function startNewTimer() {
-  timerStore.set({
+  timerStore.update((state) => ({
     currentTimer: "sitting",
     sittingTime: 0,
     standingTime: 0,
     walkingTime: 0,
     needsReset: false,
     allTimersComplete: false,
-    autoTransition: false
-  })
+    autoTransition: state.preferences.autoTransition,
+    notifications: state.notifications,
+    preferences: state.preferences,
+    stats: state.stats
+  }))
+}
+
+// Notification functions
+export function updateNotificationSettings(settings) {
+  timerStore.update((state) => ({
+    ...state,
+    notifications: { ...state.notifications, ...settings }
+  }))
+}
+
+export function updatePreferences(prefs) {
+  timerStore.update((state) => ({
+    ...state,
+    preferences: { ...state.preferences, ...prefs }
+  }))
+}
+
+// Save last used timer values
+export function saveLastUsedTimes(sitting, standing, walking) {
+  timerStore.update((state) => ({
+    ...state,
+    preferences: {
+      ...state.preferences,
+      lastUsedSitting: sitting,
+      lastUsedStanding: standing,
+      lastUsedWalking: walking
+    }
+  }))
 }

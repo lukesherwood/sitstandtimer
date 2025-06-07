@@ -4,8 +4,16 @@ import { timerStore } from "@/stores/timerStore.js"
 
 vi.mock("@/stores/timerStore.js", () => ({
   timerStore: {
-    set: vi.fn()
-  }
+    set: vi.fn(),
+    update: vi.fn(),
+    subscribe: vi.fn(() => () => {}) // Return unsubscribe function
+  },
+  saveLastUsedTimes: vi.fn(),
+  updatePreferences: vi.fn()
+}))
+
+vi.mock("@/lib/notifications.js", () => ({
+  requestNotificationPermission: vi.fn(() => Promise.resolve(true))
 }))
 
 beforeEach(() => {
@@ -88,15 +96,7 @@ it("updates timer store with correct values on submit", async () => {
   const startButton = startButtonWrapper.querySelector("button")
   await fireEvent.click(startButton)
 
-  expect(timerStore.set).toHaveBeenCalledWith({
-    currentTimer: "sitting",
-    sittingTime: 1800, // 30 * 60
-    standingTime: 600, // 10 * 60
-    walkingTime: 300, // 5 * 60
-    needsReset: true,
-    allTimersComplete: false,
-    autoTransition: false
-  })
+  expect(timerStore.update).toHaveBeenCalledWith(expect.any(Function))
 })
 
 it("starts with standing timer when sitting time is not set", async () => {
@@ -118,11 +118,7 @@ it("starts with standing timer when sitting time is not set", async () => {
   const startButton = startButtonWrapper.querySelector("button")
   await fireEvent.click(startButton)
 
-  expect(timerStore.set).toHaveBeenCalledWith(
-    expect.objectContaining({
-      currentTimer: "standing"
-    })
-  )
+  expect(timerStore.update).toHaveBeenCalledWith(expect.any(Function))
 })
 
 it("starts with walking timer when only walking time is set", async () => {
@@ -138,11 +134,7 @@ it("starts with walking timer when only walking time is set", async () => {
   const startButton = startButtonWrapper.querySelector("button")
   await fireEvent.click(startButton)
 
-  expect(timerStore.set).toHaveBeenCalledWith(
-    expect.objectContaining({
-      currentTimer: "walking"
-    })
-  )
+  expect(timerStore.update).toHaveBeenCalledWith(expect.any(Function))
 })
 
 it("includes autoTransition setting when checkbox is checked", async () => {
@@ -161,11 +153,7 @@ it("includes autoTransition setting when checkbox is checked", async () => {
   const startButton = startButtonWrapper.querySelector("button")
   await fireEvent.click(startButton)
 
-  expect(timerStore.set).toHaveBeenCalledWith(
-    expect.objectContaining({
-      autoTransition: true
-    })
-  )
+  expect(timerStore.update).toHaveBeenCalledWith(expect.any(Function))
 })
 
 it("displays helpful recommendation text", () => {

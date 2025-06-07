@@ -1,6 +1,10 @@
 import { render, screen, fireEvent } from "@testing-library/svelte"
 import Timer from "@/components/Timer.svelte"
 
+vi.mock("@/lib/notifications.js", () => ({
+  notifyTimerComplete: vi.fn()
+}))
+
 const defaultTimerState = {
   currentTimer: "sitting",
   sittingTime: 1800,

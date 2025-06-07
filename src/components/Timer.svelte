@@ -4,6 +4,7 @@
   import TimerDisplay from "./TimerDisplay.svelte"
   import TimerControls from "./TimerControls.svelte"
   import TimerCompletion from "./TimerCompletion.svelte"
+  import { notifyTimerComplete } from "../lib/notifications.js"
 
   const dispatch = createEventDispatcher()
   
@@ -50,9 +51,27 @@
       count = Math.round((end - Date.now()) / 1000)
       if (count <= 0) {
         clearTimerInterval()
-        audio.play()
-        timerComplete = true
         
+        // Audio notification
+        if (actualTimerState.notifications?.audio) {
+          audio.play()
+        }
+        
+        // Determine next timer
+        const timers = ["sitting", "standing", "walking"]
+        const currentIndex = timers.indexOf(actualTimerState.currentTimer)
+        const nextTimer = timers.find(
+          (timer, index) => index > currentIndex && actualTimerState[`${timer}Time`] > 0
+        )
+        
+        // Send notifications
+        notifyTimerComplete(
+          actualTimerState.currentTimer, 
+          nextTimer, 
+          actualTimerState.notifications || { browser: false, audio: true, visual: true }
+        )
+        
+        timerComplete = true
         
         if (actualTimerState.autoTransition) {
           // Show message briefly before auto-transitioning
