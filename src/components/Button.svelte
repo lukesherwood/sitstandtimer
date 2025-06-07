@@ -5,6 +5,7 @@
   export let disabled = false
   export let disabledText = "Disabled"
   export let clazz = ""
+  export let type = "button"
 
   let showTooltip = false
   function handleClick() {
@@ -22,6 +23,7 @@
     on:blur={() => (showTooltip = false)}
     on:click={handleClick}
     {disabled}
+    {type}
     data-testid="button"
   >
     <slot />

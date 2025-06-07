@@ -6,9 +6,9 @@
 
   const dispatch = createEventDispatcher()
 
-  let walkingTime = ""
-  let standingTime = ""
-  let sittingTime = ""
+  let walkingTime = 0
+  let standingTime = 0
+  let sittingTime = 0
   let autoTransition = false
 
   $: isStartEnabled = walkingTime > 0 || standingTime > 0 || sittingTime > 0

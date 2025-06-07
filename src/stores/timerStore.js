@@ -2,19 +2,19 @@ import { writable } from "svelte/store"
 
 export const timerStore = writable({
   currentTimer: "sitting",
-  sittingTime: "",
-  standingTime: "",
-  walkingTime: "",
+  sittingTime: 0,
+  standingTime: 0,
+  walkingTime: 0,
   needsReset: false,
   allTimersComplete: false,
   autoTransition: false
 })
 
 export function resetTimer() {
-  timerStore.update((state) => {
-    state.needsReset = true
-    return state
-  })
+  timerStore.update((state) => ({
+    ...state,
+    needsReset: true
+  }))
 }
 
 function getNextTimer(state) {
@@ -31,13 +31,18 @@ export function completeCurrentTimer() {
   timerStore.update((state) => {
     const nextTimer = getNextTimer(state)
     if (nextTimer) {
-      state.currentTimer = nextTimer
-      state.needsReset = true
+      return {
+        ...state,
+        currentTimer: nextTimer,
+        needsReset: true
+      }
     } else {
-      state.allTimersComplete = true
-      state.needsReset = false
+      return {
+        ...state,
+        allTimersComplete: true,
+        needsReset: false
+      }
     }
-    return state
   })
 }
 

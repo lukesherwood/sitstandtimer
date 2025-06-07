@@ -8,15 +8,11 @@
     startNewTimer
   } from "../stores/timerStore.js"
 
-  let timerState
   let showTimer = false
 
-  timerStore.subscribe((value) => {
-    timerState = value
-    if (value.allTimersComplete) {
-      showTimer = false
-    }
-  })
+  $: if ($timerStore.allTimersComplete) {
+    showTimer = false
+  }
 
   function handleComplete() {
     completeCurrentTimer()
@@ -40,7 +36,6 @@
 <div class="pt-5 w-full max-h-fit">
   {#if showTimer}
     <Timer
-      {timerState}
       on:complete={handleComplete}
       on:newTimer={handleNewTimer}
       on:nextTimer={handleNextTimer}
