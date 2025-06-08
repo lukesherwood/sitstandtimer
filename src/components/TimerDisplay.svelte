@@ -11,15 +11,11 @@
       // Progress from 0 (start) to 1 (complete)
       const progressComplete = Math.max(0, (countdown - count) / countdown)
       
-      // For stroke-dashoffset: 0 means full circle, 1 means no circle
-      // We want to show progressComplete amount of the circle
       offset = 1 - progressComplete
       
-      // For rotation: start at -90 degrees (top), rotate as we progress
-      // The SVG is already rotated -90deg, so we start at 0 and add progress
       rotation = progressComplete * 360
     } else {
-      offset = 0  // Show full circle when complete
+      offset = 0 
       rotation = 360
     }
   })

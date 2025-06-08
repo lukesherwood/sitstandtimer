@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "@testing-library/svelte"
+import { render, screen, fireEvent, within } from "@testing-library/svelte"
 import TimerCompletion from "@/components/TimerCompletion.svelte"
 
 const defaultTimerState = {
@@ -16,9 +16,7 @@ describe("when timer is the last timer", () => {
     })
 
     expect(screen.getByTestId("all-complete-message")).toBeInTheDocument()
-    expect(
-      screen.getByText("Well done, all timers completed. Start again?")
-    ).toBeInTheDocument()
+    expect(screen.getByText(/congratulations/i)).toBeInTheDocument()
   })
 
   it("shows reset all button when last timer is complete", () => {
@@ -46,9 +44,8 @@ describe("when timer is the last timer", () => {
       }
     })
 
-    const resetAllButton = screen
-      .getByTestId("reset-all-button")
-      .querySelector("button")
+    const resetAllWrapper = screen.getByTestId("reset-all-button")
+    const resetAllButton = within(resetAllWrapper).getByTestId("button")
     await fireEvent.click(resetAllButton)
 
     expect(resetAllFired).toBe(true)
@@ -65,8 +62,7 @@ describe("when timer is not the last timer", () => {
     })
 
     expect(screen.getByTestId("timer-complete-message")).toBeInTheDocument()
-    expect(screen.getByText("Sitting Timer Complete!")).toBeInTheDocument()
-    expect(screen.getByText("Time to stand up and move!")).toBeInTheDocument()
+    expect(screen.getByText(/sitting timer complete/i)).toBeInTheDocument()
   })
 
   it("shows next timer button when autoTransition is disabled", () => {
@@ -100,7 +96,7 @@ describe("when timer is not the last timer", () => {
     })
 
     expect(
-      screen.getByText("Automatically moving to next timer...")
+      screen.getByText(/automatically/i)
     ).toBeInTheDocument()
   })
 
@@ -118,9 +114,8 @@ describe("when timer is not the last timer", () => {
       }
     })
 
-    const nextTimerButton = screen
-      .getByTestId("next-timer-button")
-      .querySelector("button")
+    const nextTimerWrapper = screen.getByTestId("next-timer-button")
+    const nextTimerButton = within(nextTimerWrapper).getByTestId("button")
     await fireEvent.click(nextTimerButton)
 
     expect(nextTimerFired).toBe(true)

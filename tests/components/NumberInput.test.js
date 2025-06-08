@@ -48,9 +48,14 @@ it("applies placeholder when provided", () => {
   expect(input).toHaveAttribute("placeholder", "Enter number")
 })
 
-it("applies styling classes", () => {
-  render(NumberInput, { props: { value: 0 } })
+it("renders number input with correct type and attributes", () => {
+  render(NumberInput, { props: { value: 5, min: 0, step: 1, placeholder: "Enter value" } })
 
   const input = screen.getByTestId("number-input")
-  expect(input).toHaveClass("text-red-100", "bg-teal-600", "rounded-full")
+  expect(input).toBeInTheDocument()
+  expect(input).toHaveAttribute("type", "number")
+  expect(input).toHaveAttribute("min", "0")
+  expect(input).toHaveAttribute("step", "1")
+  expect(input).toHaveAttribute("placeholder", "Enter value")
+  expect(input).toHaveValue(5)
 })

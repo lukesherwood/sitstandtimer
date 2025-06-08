@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/svelte'
+import { render, screen, fireEvent, within } from '@testing-library/svelte'
 import TimerControls from '@/components/TimerControls.svelte'
 
   const defaultProps = {
@@ -42,7 +42,8 @@ import TimerControls from '@/components/TimerControls.svelte'
     
     render(TimerControls, { props: { ...defaultProps, onreset } })
     
-    const resetButton = screen.getByTestId('reset-button').querySelector('button')
+    const resetWrapper = screen.getByTestId('reset-button')
+    const resetButton = within(resetWrapper).getByTestId('button')
     await fireEvent.click(resetButton)
     
     expect(resetFired).toBe(true)
@@ -56,7 +57,8 @@ import TimerControls from '@/components/TimerControls.svelte'
     
     render(TimerControls, { props: { ...defaultProps, onpauseResume } })
     
-    const pauseResumeButton = screen.getByTestId('pause-resume-button').querySelector('button')
+    const pauseResumeWrapper = screen.getByTestId('pause-resume-button')
+    const pauseResumeButton = within(pauseResumeWrapper).getByTestId('button')
     await fireEvent.click(pauseResumeButton)
     
     expect(pauseResumeFired).toBe(true)
@@ -70,7 +72,8 @@ import TimerControls from '@/components/TimerControls.svelte'
     
     render(TimerControls, { props: { ...defaultProps, onnewTimer } })
     
-    const newTimerButton = screen.getByTestId('new-timer-button').querySelector('button')
+    const newTimerWrapper = screen.getByTestId('new-timer-button')
+    const newTimerButton = within(newTimerWrapper).getByTestId('button')
     await fireEvent.click(newTimerButton)
     
     expect(newTimerFired).toBe(true)

@@ -114,82 +114,14 @@
     <div class="text-center">
       <h2 class="text-xl font-semibold text-teal-900 mb-3">Set Your Timer Duration</h2>
       <p class="text-base text-teal-800 mb-8 px-4 max-w-3xl mx-auto">Enter minutes for each activity. You can use any combination - just sitting and standing, or include walking breaks too.</p>
-      <!-- Notification Settings -->
-      <div
-        class="bg-teal-50 rounded-xl mt-6 mb-8 border border-teal-200 shadow-sm"
-      >
-        <button
-          type="button"
-          class="w-full p-4 text-left flex items-center justify-between hover:bg-teal-100 rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
-          onclick={() => notificationSettingsExpanded = !notificationSettingsExpanded}
-        >
-          <h3 class="text-base font-semibold text-teal-900">Notification Settings</h3>
-          <svg
-            class="w-4 h-4 transition-transform duration-200 {notificationSettingsExpanded ? 'rotate-180' : ''}"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-          </svg>
-        </button>
-        
-        {#if notificationSettingsExpanded}
-          <div class="px-4 pb-4 border-t border-teal-200 pt-4">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div class="flex items-center">
-                <input
-                  type="checkbox"
-                  bind:checked={notificationSettings.browser}
-                  onchange={handleBrowserNotificationToggle}
-                  id="browserNotifications"
-                  class="w-5 h-5 mr-3 text-teal-600 rounded focus:ring-teal-500 focus:ring-2"
-                />
-                <label for="browserNotifications" class="text-sm font-medium text-teal-900 cursor-pointer"
-                  >Browser Notifications</label
-                >
-              </div>
-              <div class="flex items-center">
-                <input
-                  type="checkbox"
-                  bind:checked={notificationSettings.audio}
-                  onchange={() =>
-                    updateNotificationSetting("audio", notificationSettings.audio)}
-                  id="audioNotifications"
-                  class="w-5 h-5 mr-3 text-teal-600 rounded focus:ring-teal-500 focus:ring-2"
-                />
-                <label for="audioNotifications" class="text-sm font-medium text-teal-900 cursor-pointer">Audio Alerts</label>
-              </div>
-              <div class="flex items-center">
-                <input
-                  type="checkbox"
-                  bind:checked={notificationSettings.visual}
-                  onchange={() =>
-                    updateNotificationSetting(
-                      "visual",
-                      notificationSettings.visual
-                    )}
-                  id="visualNotifications"
-                  class="w-5 h-5 mr-3 text-teal-600 rounded focus:ring-teal-500 focus:ring-2"
-                />
-                <label for="visualNotifications" class="text-sm font-medium text-teal-900 cursor-pointer"
-                  >Visual Alerts</label
-                >
-              </div>
-            </div>
-          </div>
-        {/if}
-      </div>
 
-      <form
-        class="max-w-4xl mx-auto px-4"
-        onsubmit={handleSubmit}
-        data-testid="timer-form"
-      >
-        <!-- Timer Inputs -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
+      <!-- Main Form Container -->
+      <div class="max-w-4xl mx-auto px-4">
+        
+        <!-- Timer Inputs Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           <div class="flex flex-col items-center">
-            <label for="sittingTimeInput" class="text-center mb-4 font-semibold text-teal-900 text-xl">
+            <label for="sittingTimeInput" class="text-center mb-3 font-semibold text-teal-900 text-lg">
               🪑 Sitting
             </label>
             <div data-testid="sitting-input">
@@ -202,7 +134,7 @@
             <span class="text-sm text-teal-700 mt-2 font-medium">minutes</span>
           </div>
           <div class="flex flex-col items-center">
-            <label for="standingTimeInput" class="text-center mb-4 font-semibold text-teal-900 text-xl">
+            <label for="standingTimeInput" class="text-center mb-3 font-semibold text-teal-900 text-lg">
               🧍 Standing
             </label>
             <div data-testid="standing-input">
@@ -215,7 +147,7 @@
             <span class="text-sm text-teal-700 mt-2 font-medium">minutes</span>
           </div>
           <div class="flex flex-col items-center">
-            <label for="walkingTimeInput" class="text-center mb-4 font-semibold text-teal-900 text-xl">
+            <label for="walkingTimeInput" class="text-center mb-3 font-semibold text-teal-900 text-lg">
               🚶 Walking
             </label>
             <div data-testid="walking-input">
@@ -229,38 +161,111 @@
           </div>
         </div>
 
-        <!-- Auto Transition Setting -->
-        <div class="flex items-center justify-center mb-10 bg-teal-50 rounded-xl p-5 mx-4 md:mx-0 border border-teal-200 shadow-sm">
-          <label for="autoTransition" class="text-center px-4 text-teal-900 font-semibold cursor-pointer">
-            Auto-start next timer
-          </label>
-          <input
-            type="checkbox"
-            bind:checked={autoTransition}
-            onchange={() => updatePreferences({ autoTransition })}
-            id="autoTransition"
-            class="w-5 h-5 text-teal-600 rounded focus:ring-teal-500 focus:ring-2 focus:ring-offset-2"
-            data-testid="auto-transition-checkbox"
-          />
-        </div>
-
-        <!-- Start Button -->
-        <div class="flex justify-center">
-          <div data-testid="start-timer-button">
-            <Button
-              type="submit"
-              tooltip="Start Timer"
-              disabledText="Enter at least one timer duration"
-              clazz="text-xl font-bold w-36 h-16 px-8 py-4 bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 focus:ring-4 focus:ring-teal-300 focus:ring-offset-2 shadow-lg hover:shadow-xl transition-all duration-200"
-              disabled={!isStartEnabled}
-            >
-              {#snippet children()}
-                Start Timer
-              {/snippet}
-            </Button>
+        <!-- Prominent Start Button -->
+        <form onsubmit={handleSubmit} data-testid="timer-form" class="mb-6">
+          <div class="flex justify-center">
+            <div data-testid="start-timer-button">
+              <Button
+                type="submit"
+                tooltip="Start Timer"
+                disabledText="Enter at least one timer duration"
+                clazz="text-2xl font-bold w-48 h-20 px-10 py-6 bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 focus:ring-4 focus:ring-teal-300 focus:ring-offset-2 shadow-xl hover:shadow-2xl transition-all duration-200 transform hover:scale-105"
+                disabled={!isStartEnabled}
+              >
+                {#snippet children()}
+                  🚀 Start Timer
+                {/snippet}
+              </Button>
+            </div>
           </div>
+        </form>
+        
+        <!-- Combined Settings Section -->
+        <div class="bg-teal-50 rounded-xl border border-teal-200 shadow-sm">
+          <button
+            type="button"
+            class="w-full p-4 text-left flex items-center justify-between hover:bg-teal-100 rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+            onclick={() => notificationSettingsExpanded = !notificationSettingsExpanded}
+            data-testid="settings-toggle-button"
+          >
+            <h3 class="text-base font-semibold text-teal-900 flex items-center gap-2">
+              ⚙️ Timer Settings
+            </h3>
+            <svg
+              class="w-4 h-4 transition-transform duration-200 {notificationSettingsExpanded ? 'rotate-180' : ''}"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          
+          {#if notificationSettingsExpanded}
+            <div class="px-4 pb-4 border-t border-teal-200 pt-4 space-y-4">
+              
+              <!-- Auto-start Setting -->
+              <div class="flex items-center justify-between p-3 bg-white rounded-lg border border-teal-100">
+                <div>
+                  <label for="autoTransition" class="font-medium text-teal-900 cursor-pointer">
+                    Auto-start next timer
+                  </label>
+                  <p class="text-sm text-teal-600 mt-1">Automatically begin the next timer when current one completes</p>
+                </div>
+                <input
+                  type="checkbox"
+                  bind:checked={autoTransition}
+                  onchange={() => updatePreferences({ autoTransition })}
+                  id="autoTransition"
+                  class="w-5 h-5 text-teal-600 rounded focus:ring-teal-500 focus:ring-2"
+                  data-testid="auto-transition-checkbox"
+                />
+              </div>
+              
+              <!-- Notification Settings -->
+              <div class="space-y-3">
+                <h4 class="font-medium text-teal-900 text-sm">Notification Options</h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div class="flex items-center p-3 bg-white rounded-lg border border-teal-100">
+                    <input
+                      type="checkbox"
+                      bind:checked={notificationSettings.browser}
+                      onchange={handleBrowserNotificationToggle}
+                      id="browserNotifications"
+                      class="w-4 h-4 mr-3 text-teal-600 rounded focus:ring-teal-500"
+                    />
+                    <label for="browserNotifications" class="text-sm font-medium text-teal-900 cursor-pointer">
+                      Browser Alerts
+                    </label>
+                  </div>
+                  <div class="flex items-center p-3 bg-white rounded-lg border border-teal-100">
+                    <input
+                      type="checkbox"
+                      bind:checked={notificationSettings.audio}
+                      onchange={() => updateNotificationSetting("audio", notificationSettings.audio)}
+                      id="audioNotifications"
+                      class="w-4 h-4 mr-3 text-teal-600 rounded focus:ring-teal-500"
+                    />
+                    <label for="audioNotifications" class="text-sm font-medium text-teal-900 cursor-pointer">Audio Alerts</label>
+                  </div>
+                  <div class="flex items-center p-3 bg-white rounded-lg border border-teal-100">
+                    <input
+                      type="checkbox"
+                      bind:checked={notificationSettings.visual}
+                      onchange={() => updateNotificationSetting("visual", notificationSettings.visual)}
+                      id="visualNotifications"
+                      class="w-4 h-4 mr-3 text-teal-600 rounded focus:ring-teal-500"
+                    />
+                    <label for="visualNotifications" class="text-sm font-medium text-teal-900 cursor-pointer">Visual Alerts</label>
+                  </div>
+                </div>
+              </div>
+              
+            </div>
+          {/if}
         </div>
-      </form>
+        
+      </div>
     </div>
   </section>
 </div>

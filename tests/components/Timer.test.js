@@ -26,10 +26,15 @@ it("renders all sub-components correctly", () => {
   expect(screen.getByTestId("new-timer-button")).toBeInTheDocument()
 })
 
-it("displays correct timer title with duration", () => {
+it("displays correct timer title and info", () => {
   render(Timer, { props: { timerState: defaultTimerState } })
 
-  expect(screen.getByText(/sitting timer \(30 minutes\)/i)).toBeInTheDocument()
+  const title = screen.getByTestId("timer-title")
+  expect(title).toBeInTheDocument()
+  expect(title).toHaveTextContent(/sitting timer/i)
+  
+  // Check that duration info is displayed somewhere
+  expect(screen.getByText("30 minutes total")).toBeInTheDocument()
 })
 
 it("calls onnewTimer callback when new timer button is clicked", async () => {
