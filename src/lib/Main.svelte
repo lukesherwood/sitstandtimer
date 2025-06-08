@@ -9,21 +9,21 @@
   } from "../stores/timerStore.js"
   import { initializePWA } from "./pwa.js"
   import { showVisualAlert } from "./notifications.js"
-  import { onMount } from "svelte"
 
-  let showTimer = false
+  let showTimer = $state(false)
 
-  onMount(() => {
-    // Initialize PWA features
+  $effect(() => {
     initializePWA()
     
     // Make notification functions globally available
     window.showVisualAlert = showVisualAlert
   })
 
-  $: if ($timerStore.allTimersComplete) {
-    showTimer = false
-  }
+  $effect(() => {
+    if ($timerStore.allTimersComplete) {
+      showTimer = false
+    }
+  })
 
   function handleComplete() {
     completeCurrentTimer()
@@ -39,20 +39,16 @@
     showTimer = false
   }
 
-  function handleNextTimer() {
-    completeCurrentTimer()
-  }
 </script>
 
 <div class="pt-5 w-full max-h-fit">
   {#if showTimer}
     <Timer
-      on:complete={handleComplete}
-      on:newTimer={handleNewTimer}
-      on:nextTimer={handleNextTimer}
+      oncomplete={handleComplete}
+      onnewTimer={handleNewTimer}
     />
   {:else}
-    <SetTime on:start={handleStart} />
+    <SetTime onstart={handleStart} />
   {/if}
 </div>
 

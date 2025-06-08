@@ -1,24 +1,21 @@
 <script>
-  import { createEventDispatcher, onDestroy } from "svelte"
   import { timerStore } from "../stores/timerStore.js"
   import TimerDisplay from "./TimerDisplay.svelte"
   import TimerControls from "./TimerControls.svelte"
   import TimerCompletion from "./TimerCompletion.svelte"
   import { notifyTimerComplete } from "../lib/notifications.js"
 
-  const dispatch = createEventDispatcher()
+  let { timerState = null, oncomplete, onnewTimer } = $props()
   
   const AUTO_TRANSITION_DELAY = 10000 // 10 seconds
   const TIMER_INTERVAL = 1000 // 1 second
   
-  export let timerState = null
+  let timerComplete = $state(false)
+  let isPaused = $state(false)
+  let audio = $state()
+  let interval = $state()
   
-  $: actualTimerState = timerState || $timerStore
-
-  let timerComplete = false
-  let isPaused = false
-  let audio
-  let interval
+  const actualTimerState = $derived(timerState || $timerStore)
 
   function clearTimerInterval() {
     if (interval) {
@@ -27,24 +24,31 @@
     }
   }
 
-  $: countdown = actualTimerState[`${actualTimerState.currentTimer}Time`]
-  $: end = Date.now() + countdown * 1000
-  $: if (actualTimerState.needsReset) {
-    handleReset()
-  }
-
-  $: count = Math.round((end - Date.now()) / 1000)
-  $: h = Math.floor(count / 3600)
-  $: m = Math.floor((count - h * 3600) / 60)
-  $: s = count - h * 3600 - m * 60
+  let end = $state(0)
+  let count = $state(0)
   
-  $: isLastTimer = (() => {
+  const countdown = $derived(actualTimerState[`${actualTimerState.currentTimer}Time`])
+  const h = $derived(Math.floor(count / 3600))
+  const m = $derived(Math.floor((count - h * 3600) / 60))
+  const s = $derived(count - h * 3600 - m * 60)
+  
+  const isLastTimer = $derived.by(() => {
     const timers = ["sitting", "standing", "walking"]
     const currentIndex = timers.indexOf(actualTimerState.currentTimer)
     return !timers.find(
       (timer, index) => index > currentIndex && actualTimerState[`${timer}Time`] > 0
     )
-  })()
+  })
+  
+  $effect(() => {
+    if (actualTimerState.needsReset) {
+      handleReset()
+    }
+  })
+  
+  $effect(() => {
+    end = Date.now() + countdown * 1000
+  })
 
   function updateTimer() {
     if (!isPaused) {
@@ -74,9 +78,9 @@
         timerComplete = true
         
         if (actualTimerState.autoTransition) {
-          // Show message briefly before auto-transitioning
+          oncomplete?.()
           setTimeout(() => {
-            handleNextTimer()
+            timerComplete = false
           }, AUTO_TRANSITION_DELAY)
         }
       } else {
@@ -87,7 +91,9 @@
 
   function handleReset() {
     clearTimeout(interval)
-    timerComplete = false
+    if (!actualTimerState.autoTransition) {
+      timerComplete = false
+    }
     end = Date.now() + countdown * 1000
     interval = setTimeout(updateTimer, TIMER_INTERVAL)
     timerStore.update(state => ({ ...state, needsReset: false }))
@@ -105,23 +111,24 @@
 
   function handleNewTimer() {
     clearTimerInterval()
-    dispatch("newTimer")
+    onnewTimer?.()
   }
 
   function handleResetAllTimers() {
     clearTimerInterval()
-    dispatch("newTimer")
+    onnewTimer?.()
   }
 
   function handleNextTimer() {
     clearTimerInterval()
-    dispatch("nextTimer")
+    oncomplete?.()
     timerComplete = false
   }
 
-
-  onDestroy(() => {
-    clearTimerInterval()
+  $effect(() => {
+    return () => {
+      clearTimerInterval()
+    }
   })
 </script>
 
@@ -135,17 +142,18 @@
   
   <TimerControls 
     {isPaused}
-    on:reset={handleReset}
-    on:pauseResume={handlePauseResume}
-    on:newTimer={handleNewTimer}
+    isTimerComplete={timerComplete}
+    onreset={handleReset}
+    onpauseResume={handlePauseResume}
+    onnewTimer={handleNewTimer}
   />
   
   {#if timerComplete}
     <TimerCompletion 
       timerState={actualTimerState}
       {isLastTimer}
-      on:resetAll={handleResetAllTimers}
-      on:nextTimer={handleNextTimer}
+      onresetAll={handleResetAllTimers}
+      onnextTimer={handleNextTimer}
     />
   {/if}
 </main>

@@ -54,7 +54,6 @@ const defaultState = {
   }
 }
 
-// Initialize store with saved data or defaults
 const initialState = {
   ...defaultState,
   ...loadFromStorage()
@@ -62,9 +61,7 @@ const initialState = {
 
 export const timerStore = writable(initialState)
 
-// Auto-save to localStorage on updates
 timerStore.subscribe((state) => {
-  // Only save persistent data, not runtime state
   const persistentData = {
     notifications: state.notifications,
     preferences: state.preferences,
@@ -94,7 +91,6 @@ export function completeCurrentTimer() {
   timerStore.update((state) => {
     const nextTimer = getNextTimer(state)
     
-    // Update stats
     const timerType = state.currentTimer
     const timeCompleted = state[`${timerType}Time`]
     const updatedStats = {
@@ -140,7 +136,6 @@ export function startNewTimer() {
   }))
 }
 
-// Notification functions
 export function updateNotificationSettings(settings) {
   timerStore.update((state) => ({
     ...state,
@@ -155,7 +150,6 @@ export function updatePreferences(prefs) {
   }))
 }
 
-// Save last used timer values
 export function saveLastUsedTimes(sitting, standing, walking) {
   timerStore.update((state) => ({
     ...state,

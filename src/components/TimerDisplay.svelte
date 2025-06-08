@@ -3,17 +3,15 @@
   import { tweened } from "svelte/motion"
   import { linear as easing } from "svelte/easing"
 
-  export let countdown
-  export let count
-  export let h
-  export let m
-  export let s
+  let { countdown, count, h, m, s } = $props()
 
   let offset = tweened(1, { duration: 1000, easing })
   let rotation = tweened(360, { duration: 1000, easing })
 
-  $: offset.set(Math.max(count - 1, 0) / countdown)
-  $: rotation.set((Math.max(count - 1, 0) / countdown) * 360)
+  $effect(() => {
+    offset.set(Math.max(count - 1, 0) / countdown)
+    rotation.set((Math.max(count - 1, 0) / countdown) * 360)
+  })
 </script>
 
 <svg

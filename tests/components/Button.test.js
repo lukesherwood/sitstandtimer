@@ -9,13 +9,13 @@ it("renders with default props", () => {
   expect(button).not.toBeDisabled()
 })
 
-it("dispatches click event when clicked", async () => {
-  const { component } = render(Button, { props: { tooltip: "Test" } })
-
+it("calls onclick callback when clicked", async () => {
   let clickFired = false
-  component.$on("click", () => {
+  const onclick = () => {
     clickFired = true
-  })
+  }
+
+  render(Button, { props: { tooltip: "Test", onclick } })
 
   const button = screen.getByTestId("button")
   await fireEvent.click(button)

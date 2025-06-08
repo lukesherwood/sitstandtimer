@@ -6,30 +6,29 @@
   } from "../stores/timerStore.js"
   import Button from "./Button.svelte"
   import NumberInput from "./NumberInput.svelte"
-  import { createEventDispatcher, onMount } from "svelte"
   import { requestNotificationPermission } from "../lib/notifications.js"
 
-  const dispatch = createEventDispatcher()
+  let { onstart } = $props()
 
-  let walkingTime = ""
-  let standingTime = ""
-  let sittingTime = ""
-  let autoTransition = false
-  let notificationSettings = {
+  let walkingTime = $state("")
+  let standingTime = $state("")
+  let sittingTime = $state("")
+  let autoTransition = $state(false)
+  let notificationSettings = $state({
     browser: false,
     audio: true,
     visual: true
-  }
-  let notificationSettingsExpanded = false
+  })
+  let notificationSettingsExpanded = $state(false)
 
   // Load saved preferences on mount
-  onMount(() => {
+  $effect(() => {
     const unsubscribe = timerStore.subscribe((state) => {
       if (state.preferences) {
         sittingTime = state.preferences.lastUsedSitting || ""
         standingTime = state.preferences.lastUsedStanding || ""
         walkingTime = state.preferences.lastUsedWalking || ""
-        autoTransition = state.preferences.autoTransition || false
+        autoTransition = state.preferences.autoTransition ?? false
       }
       if (state.notifications) {
         notificationSettings = { ...state.notifications }
@@ -38,7 +37,7 @@
     return unsubscribe
   })
 
-  $: isStartEnabled = walkingTime > 0 || standingTime > 0 || sittingTime > 0
+  const isStartEnabled = $derived(walkingTime > 0 || standingTime > 0 || sittingTime > 0)
 
   async function handleBrowserNotificationToggle() {
     if (
@@ -69,15 +68,19 @@
     }))
   }
 
-  function handleSubmit() {
-    // Save current timer values as last used
+  function handleSubmit(event) {
+    event.preventDefault()
     saveLastUsedTimes(sittingTime, standingTime, walkingTime)
     updatePreferences({ autoTransition })
 
     timerStore.update((state) => ({
       ...state,
-      currentTimer:
-        sittingTime > 0 ? "sitting" : standingTime > 0 ? "standing" : "walking",
+      currentTimer: (() => {
+        if (sittingTime > 0) return "sitting"
+        if (standingTime > 0) return "standing" 
+        if (walkingTime > 0) return "walking"
+        return "sitting" // fallback, shouldn't happen since start is disabled when all are 0
+      })(),
       sittingTime: sittingTime * 60,
       standingTime: standingTime * 60,
       walkingTime: walkingTime * 60,
@@ -85,7 +88,7 @@
       allTimersComplete: false,
       autoTransition: autoTransition
     }))
-    dispatch("start")
+    onstart?.()
   }
 </script>
 
@@ -110,7 +113,7 @@
         <button
           type="button"
           class="w-full p-4 text-left flex items-center justify-between hover:bg-opacity-30 hover:bg-teal-600 rounded-lg transition-colors"
-          on:click={() => notificationSettingsExpanded = !notificationSettingsExpanded}
+          onclick={() => notificationSettingsExpanded = !notificationSettingsExpanded}
         >
           <h3 class="text-sm font-semibold">Notification Settings</h3>
           <svg
@@ -130,7 +133,7 @@
                 <input
                   type="checkbox"
                   bind:checked={notificationSettings.browser}
-                  on:change={handleBrowserNotificationToggle}
+                  onchange={handleBrowserNotificationToggle}
                   id="browserNotifications"
                   class="w-4 h-4 mr-2"
                 />
@@ -142,7 +145,7 @@
                 <input
                   type="checkbox"
                   bind:checked={notificationSettings.audio}
-                  on:change={() =>
+                  onchange={() =>
                     updateNotificationSetting("audio", notificationSettings.audio)}
                   id="audioNotifications"
                   class="w-4 h-4 mr-2"
@@ -153,7 +156,7 @@
                 <input
                   type="checkbox"
                   bind:checked={notificationSettings.visual}
-                  on:change={() =>
+                  onchange={() =>
                     updateNotificationSetting(
                       "visual",
                       notificationSettings.visual
@@ -177,6 +180,7 @@
         <input
           type="checkbox"
           bind:checked={autoTransition}
+          onchange={() => updatePreferences({ autoTransition })}
           id="autoTransition"
           class="w-4 h-4"
           data-testid="auto-transition-checkbox"
@@ -187,7 +191,7 @@
       >
         <form
           class="flex flex-col md:flex-row justify-center items-center gap-5"
-          on:submit|preventDefault={handleSubmit}
+          onsubmit={handleSubmit}
           data-testid="timer-form"
         >
           <div class="flex flex-col items-center">
@@ -236,7 +240,9 @@
                 clazz="text-lg text-medium w-24 h-24 p-8"
                 disabled={!isStartEnabled}
               >
-                Start Timer
+                {#snippet children()}
+                  Start Timer
+                {/snippet}
               </Button>
             </div>
           </div>

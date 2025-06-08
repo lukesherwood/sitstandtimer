@@ -1,9 +1,11 @@
 <script>
-  export let value
-  export let min = 0
-  export let step = 1
-  export let placeholder = ""
-  export let id = ""
+  let { 
+    value = $bindable(),
+    min = 0,
+    step = 1,
+    placeholder = "",
+    id = ""
+  } = $props()
 </script>
 
 <input

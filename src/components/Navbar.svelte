@@ -32,7 +32,7 @@
         </div>
       </div>
       <!-- Toggle Button -->
-      <button class="md:hidden px-2 py-5" on:click={() => (isOpen = !isOpen)}>
+      <button class="md:hidden px-2 py-5" onclick={() => (isOpen = !isOpen)}>
         <svg
           class="h-6 w-6"
           fill="none"

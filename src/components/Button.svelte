@@ -1,32 +1,36 @@
 <script>
-  import { createEventDispatcher } from "svelte"
-  const dispatch = createEventDispatcher()
-  export let tooltip
-  export let disabled = false
-  export let disabledText = "Disabled"
-  export let clazz = ""
-  export let type = "button"
+  let {
+    tooltip,
+    disabled = false,
+    disabledText = "Disabled",
+    clazz = "",
+    type = "button",
+    onclick,
+    children
+  } = $props()
 
-  let showTooltip = false
+  let showTooltip = $state(false)
+  
   function handleClick() {
-    dispatch("click")
+    onclick?.()
   }
-  $: tooltipText = disabled ? disabledText : tooltip
+  
+  const tooltipText = $derived(disabled ? disabledText : tooltip)
 </script>
 
 <div class="relative flex flex-col items-center group">
   <button
     class="w-12 h-12 flex justify-center items-center rounded-full bg-teal-800 shadow disabled:opacity-50 enabled:hover:bg-amber-500 transition ease-in-out duration-200 {clazz}"
-    on:mouseover={() => (showTooltip = true)}
-    on:mouseout={() => (showTooltip = false)}
-    on:focus={() => (showTooltip = true)}
-    on:blur={() => (showTooltip = false)}
-    on:click={handleClick}
+    onmouseover={() => (showTooltip = true)}
+    onmouseout={() => (showTooltip = false)}
+    onfocus={() => (showTooltip = true)}
+    onblur={() => (showTooltip = false)}
+    onclick={handleClick}
     {disabled}
     {type}
     data-testid="button"
   >
-    <slot />
+    {@render children?.()}
   </button>
 
   {#if showTooltip && tooltipText}

@@ -32,14 +32,14 @@ it("displays correct timer title with duration", () => {
   expect(screen.getByText(/sitting timer \(30 minutes\)/i)).toBeInTheDocument()
 })
 
-it("dispatches newTimer event when new timer button is clicked", async () => {
-  const { component } = render(Timer, {
-    props: { timerState: defaultTimerState }
-  })
-
+it("calls onnewTimer callback when new timer button is clicked", async () => {
   let newTimerFired = false
-  component.$on("newTimer", () => {
+  const onnewTimer = () => {
     newTimerFired = true
+  }
+
+  render(Timer, {
+    props: { timerState: defaultTimerState, onnewTimer }
   })
 
   const newTimerButton = screen

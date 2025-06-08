@@ -34,13 +34,13 @@ import TimerControls from '@/components/TimerControls.svelte'
     expect(polygon).toHaveAttribute('points', '5 3 19 12 5 21 5 3')
   })
 
-  it('dispatches reset event when reset button is clicked', async () => {
-    const { component } = render(TimerControls, { props: defaultProps })
-    
+  it('calls onreset callback when reset button is clicked', async () => {
     let resetFired = false
-    component.$on('reset', () => {
+    const onreset = () => {
       resetFired = true
-    })
+    }
+    
+    render(TimerControls, { props: { ...defaultProps, onreset } })
     
     const resetButton = screen.getByTestId('reset-button').querySelector('button')
     await fireEvent.click(resetButton)
@@ -48,13 +48,13 @@ import TimerControls from '@/components/TimerControls.svelte'
     expect(resetFired).toBe(true)
   })
 
-  it('dispatches pauseResume event when pause/resume button is clicked', async () => {
-    const { component } = render(TimerControls, { props: defaultProps })
-    
+  it('calls onpauseResume callback when pause/resume button is clicked', async () => {
     let pauseResumeFired = false
-    component.$on('pauseResume', () => {
+    const onpauseResume = () => {
       pauseResumeFired = true
-    })
+    }
+    
+    render(TimerControls, { props: { ...defaultProps, onpauseResume } })
     
     const pauseResumeButton = screen.getByTestId('pause-resume-button').querySelector('button')
     await fireEvent.click(pauseResumeButton)
@@ -62,13 +62,13 @@ import TimerControls from '@/components/TimerControls.svelte'
     expect(pauseResumeFired).toBe(true)
   })
 
-  it('dispatches newTimer event when new timer button is clicked', async () => {
-    const { component } = render(TimerControls, { props: defaultProps })
-    
+  it('calls onnewTimer callback when new timer button is clicked', async () => {
     let newTimerFired = false
-    component.$on('newTimer', () => {
+    const onnewTimer = () => {
       newTimerFired = true
-    })
+    }
+    
+    render(TimerControls, { props: { ...defaultProps, onnewTimer } })
     
     const newTimerButton = screen.getByTestId('new-timer-button').querySelector('button')
     await fireEvent.click(newTimerButton)

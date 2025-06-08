@@ -50,13 +50,13 @@ it("start button is enabled when at least one time is set", async () => {
   expect(startButton).toBeInTheDocument()
 })
 
-it("dispatches start event when form is submitted", async () => {
-  const { component } = render(SetTime)
-
+it("calls onstart callback when form is submitted", async () => {
   let startEventFired = false
-  component.$on("start", () => {
+  const onstart = () => {
     startEventFired = true
-  })
+  }
+
+  render(SetTime, { props: { onstart } })
 
   const sittingWrapper = screen.getByTestId("sitting-input")
   const sittingInput = sittingWrapper.querySelector(

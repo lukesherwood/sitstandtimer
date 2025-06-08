@@ -32,17 +32,18 @@ describe("when timer is the last timer", () => {
     expect(screen.getByTestId("reset-all-button")).toBeInTheDocument()
   })
 
-  it("dispatches resetAll event when reset all button is clicked", async () => {
-    const { component } = render(TimerCompletion, {
+  it("calls onresetAll callback when reset all button is clicked", async () => {
+    let resetAllFired = false
+    const onresetAll = () => {
+      resetAllFired = true
+    }
+
+    render(TimerCompletion, {
       props: {
         timerState: defaultTimerState,
-        isLastTimer: true
+        isLastTimer: true,
+        onresetAll
       }
-    })
-
-    let resetAllFired = false
-    component.$on("resetAll", () => {
-      resetAllFired = true
     })
 
     const resetAllButton = screen
@@ -103,17 +104,18 @@ describe("when timer is not the last timer", () => {
     ).toBeInTheDocument()
   })
 
-  it("dispatches nextTimer event when next timer button is clicked", async () => {
-    const { component } = render(TimerCompletion, {
+  it("calls onnextTimer callback when next timer button is clicked", async () => {
+    let nextTimerFired = false
+    const onnextTimer = () => {
+      nextTimerFired = true
+    }
+
+    render(TimerCompletion, {
       props: {
         timerState: { ...defaultTimerState, autoTransition: false },
-        isLastTimer: false
+        isLastTimer: false,
+        onnextTimer
       }
-    })
-
-    let nextTimerFired = false
-    component.$on("nextTimer", () => {
-      nextTimerFired = true
     })
 
     const nextTimerButton = screen
