@@ -104,12 +104,14 @@ export function completeCurrentTimer() {
       return {
         ...state,
         currentTimer: nextTimer,
+        completedTimer: timerType,
         needsReset: true,
         stats: updatedStats
       }
     } else {
       return {
         ...state,
+        completedTimer: timerType,
         allTimersComplete: true,
         needsReset: false,
         stats: {
@@ -124,6 +126,7 @@ export function completeCurrentTimer() {
 export function startNewTimer() {
   timerStore.update((state) => ({
     currentTimer: "sitting",
+    completedTimer: null,
     sittingTime: 0,
     standingTime: 0,
     walkingTime: 0,

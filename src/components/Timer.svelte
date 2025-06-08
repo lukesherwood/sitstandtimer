@@ -33,8 +33,10 @@
   const s = $derived(count - h * 3600 - m * 60)
   
   const isLastTimer = $derived.by(() => {
+    // Use completedTimer if available (when timer just completed), otherwise currentTimer
+    const timerToCheck = actualTimerState.completedTimer || actualTimerState.currentTimer
     const timers = ["sitting", "standing", "walking"]
-    const currentIndex = timers.indexOf(actualTimerState.currentTimer)
+    const currentIndex = timers.indexOf(timerToCheck)
     return !timers.find(
       (timer, index) => index > currentIndex && actualTimerState[`${timer}Time`] > 0
     )

@@ -49,26 +49,26 @@
     <div class="bg-gradient-to-r from-teal-50 to-blue-50 border-2 border-teal-200 rounded-xl p-4 text-center shadow-lg" data-testid="timer-complete-message">
       <div class="flex justify-center mb-3">
         <div class="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center">
-          {#if timerState.currentTimer === 'sitting'}
+          {#if timerState.completedTimer === 'sitting'}
             <span class="text-2xl">🪑</span>
-          {:else if timerState.currentTimer === 'standing'}
+          {:else if timerState.completedTimer === 'standing'}
             <span class="text-2xl">🧍</span>
-          {:else if timerState.currentTimer === 'walking'}
+          {:else if timerState.completedTimer === 'walking'}
             <span class="text-2xl">🚶</span>
           {/if}
         </div>
       </div>
       
       <h2 class="text-xl font-bold text-teal-900 mb-2 capitalize">
-        {timerState.currentTimer} Timer Complete!
+        {timerState.completedTimer} Timer Complete!
       </h2>
       
       <div class="text-base text-teal-800 mb-4">
-        {#if timerState.currentTimer === 'sitting'}
+        {#if timerState.completedTimer === 'sitting'}
           <p>Great job! Time to stand up and move your body.</p>
-        {:else if timerState.currentTimer === 'standing'}
+        {:else if timerState.completedTimer === 'standing'}
           <p>Excellent! You've given your body a good stretch.</p>
-        {:else if timerState.currentTimer === 'walking'}
+        {:else if timerState.completedTimer === 'walking'}
           <p>Well done! You've completed your movement break.</p>
         {/if}
         
