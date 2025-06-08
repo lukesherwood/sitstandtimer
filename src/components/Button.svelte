@@ -20,7 +20,7 @@
 
 <div class="relative flex flex-col items-center group">
   <button
-    class="w-12 h-12 flex justify-center items-center rounded-full bg-teal-800 shadow disabled:opacity-50 enabled:hover:bg-amber-500 transition ease-in-out duration-200 {clazz}"
+    class="w-12 h-12 flex justify-center items-center rounded-full bg-teal-700 text-white shadow-lg disabled:opacity-50 disabled:cursor-not-allowed enabled:hover:bg-teal-800 enabled:active:bg-teal-900 focus:outline-none focus:ring-4 focus:ring-teal-300 focus:ring-offset-2 transition-all duration-200 {clazz}"
     onmouseover={() => (showTooltip = true)}
     onmouseout={() => (showTooltip = false)}
     onfocus={() => (showTooltip = true)}
@@ -35,7 +35,7 @@
 
   {#if showTooltip && tooltipText}
     <div
-      class="absolute bottom-full mb-2 w-32 bg-black text-sm text-center rounded p-2 shadow-md"
+      class="absolute bottom-full mb-2 w-40 bg-teal-900 text-white text-sm text-center rounded-lg p-3 shadow-lg border border-teal-700"
       data-testid="tooltip"
     >
       {tooltipText}

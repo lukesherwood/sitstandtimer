@@ -93,29 +93,37 @@
 </script>
 
 <div data-testid="set-time">
-  <div class="text-center">
-    <h2>Select Timer Duration</h2>
-  </div>
-  <section>
-    <div class="text-center">
-      <small>
-        It is recommended that you get up and stand at least every 50 minutes
+  <div class="text-center mb-6">
+    <h1 class="text-3xl md:text-4xl font-bold text-teal-900 mb-4 tracking-tight">Sit Stand Timer</h1>
+    <p class="text-lg text-teal-800 max-w-2xl mx-auto px-4 mb-6 leading-relaxed">
+      Improve your health and productivity with regular movement breaks. This timer helps you alternate between sitting, standing, and walking throughout your day.
+    </p>
+    <div class="bg-teal-50 border-l-4 border-teal-600 p-4 mx-4 md:mx-auto md:max-w-xl shadow-sm">
+      <p class="text-sm text-teal-900 leading-relaxed">
+        <strong class="font-semibold">Health tip:</strong> Standing for just 15 minutes every hour can reduce back pain and boost energy levels.
         <a
           target="_blank"
           href="https://www.fitnessmadeclear.com/blog-1/2019/5/11/dr-stu-mcgills-10-best-habits-for-a-healthy-back#:~:text=Avoid%20Prolonged%20Sitting&text=Dr%20McGill%20recommends%20adjusting%20your,walking%20for%20a%20few%20minutes."
-          >*
+          class="inline-block mt-1 text-teal-700 underline hover:text-teal-900 focus:text-teal-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-1 rounded transition-colors"
+          >Learn more →
         </a>
-      </small>
+      </p>
+    </div>
+  </div>
+  <section>
+    <div class="text-center">
+      <h2 class="text-xl font-semibold text-teal-900 mb-3">Set Your Timer Duration</h2>
+      <p class="text-base text-teal-800 mb-8 px-4 max-w-3xl mx-auto">Enter minutes for each activity. You can use any combination - just sitting and standing, or include walking breaks too.</p>
       <!-- Notification Settings -->
       <div
-        class="bg-teal-600 bg-opacity-20 rounded-lg mt-4 mb-4 border border-teal-300"
+        class="bg-teal-50 rounded-xl mt-6 mb-8 border border-teal-200 shadow-sm"
       >
         <button
           type="button"
-          class="w-full p-4 text-left flex items-center justify-between hover:bg-opacity-30 hover:bg-teal-600 rounded-lg transition-colors"
+          class="w-full p-4 text-left flex items-center justify-between hover:bg-teal-100 rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
           onclick={() => notificationSettingsExpanded = !notificationSettingsExpanded}
         >
-          <h3 class="text-sm font-semibold">Notification Settings</h3>
+          <h3 class="text-base font-semibold text-teal-900">Notification Settings</h3>
           <svg
             class="w-4 h-4 transition-transform duration-200 {notificationSettingsExpanded ? 'rotate-180' : ''}"
             fill="none"
@@ -127,17 +135,17 @@
         </button>
         
         {#if notificationSettingsExpanded}
-          <div class="px-4 pb-4 border-t border-teal-300 border-opacity-30 pt-3">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="px-4 pb-4 border-t border-teal-200 pt-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div class="flex items-center">
                 <input
                   type="checkbox"
                   bind:checked={notificationSettings.browser}
                   onchange={handleBrowserNotificationToggle}
                   id="browserNotifications"
-                  class="w-4 h-4 mr-2"
+                  class="w-5 h-5 mr-3 text-teal-600 rounded focus:ring-teal-500 focus:ring-2"
                 />
-                <label for="browserNotifications" class="text-sm"
+                <label for="browserNotifications" class="text-sm font-medium text-teal-900 cursor-pointer"
                   >Browser Notifications</label
                 >
               </div>
@@ -148,9 +156,9 @@
                   onchange={() =>
                     updateNotificationSetting("audio", notificationSettings.audio)}
                   id="audioNotifications"
-                  class="w-4 h-4 mr-2"
+                  class="w-5 h-5 mr-3 text-teal-600 rounded focus:ring-teal-500 focus:ring-2"
                 />
-                <label for="audioNotifications" class="text-sm">Audio Alerts</label>
+                <label for="audioNotifications" class="text-sm font-medium text-teal-900 cursor-pointer">Audio Alerts</label>
               </div>
               <div class="flex items-center">
                 <input
@@ -162,9 +170,9 @@
                       notificationSettings.visual
                     )}
                   id="visualNotifications"
-                  class="w-4 h-4 mr-2"
+                  class="w-5 h-5 mr-3 text-teal-600 rounded focus:ring-teal-500 focus:ring-2"
                 />
-                <label for="visualNotifications" class="text-sm"
+                <label for="visualNotifications" class="text-sm font-medium text-teal-900 cursor-pointer"
                   >Visual Alerts</label
                 >
               </div>
@@ -173,81 +181,86 @@
         {/if}
       </div>
 
-      <div class="flex items-center mt-4 md:mt-0 w-full justify-center pt-5">
-        <label for="autoTransition" class="text-center px-2"
-          >Automatic timer start
-        </label>
-        <input
-          type="checkbox"
-          bind:checked={autoTransition}
-          onchange={() => updatePreferences({ autoTransition })}
-          id="autoTransition"
-          class="w-4 h-4"
-          data-testid="auto-transition-checkbox"
-        />
-      </div>
-      <div
-        class="p-4 flex flex-col md:flex-row justify-center items-center gap-5"
+      <form
+        class="max-w-4xl mx-auto px-4"
+        onsubmit={handleSubmit}
+        data-testid="timer-form"
       >
-        <form
-          class="flex flex-col md:flex-row justify-center items-center gap-5"
-          onsubmit={handleSubmit}
-          data-testid="timer-form"
-        >
+        <!-- Timer Inputs -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-10">
           <div class="flex flex-col items-center">
-            <label for="sittingTimeInput" class="text-center mb-2"
-              >Sitting</label
-            >
+            <label for="sittingTimeInput" class="text-center mb-4 font-semibold text-teal-900 text-xl">
+              🪑 Sitting
+            </label>
             <div data-testid="sitting-input">
               <NumberInput
                 bind:value={sittingTime}
-                placeholder="40 mins"
+                placeholder="40"
                 id="sittingTimeInput"
               />
             </div>
+            <span class="text-sm text-teal-700 mt-2 font-medium">minutes</span>
           </div>
           <div class="flex flex-col items-center">
-            <label for="standingTimeInput" class="text-center mb-2"
-              >Standing</label
-            >
+            <label for="standingTimeInput" class="text-center mb-4 font-semibold text-teal-900 text-xl">
+              🧍 Standing
+            </label>
             <div data-testid="standing-input">
               <NumberInput
                 bind:value={standingTime}
-                placeholder="15 mins"
+                placeholder="15"
                 id="standingTimeInput"
               />
             </div>
+            <span class="text-sm text-teal-700 mt-2 font-medium">minutes</span>
           </div>
           <div class="flex flex-col items-center">
-            <label for="walkingTimeInput" class="text-center mb-2"
-              >Walking</label
-            >
+            <label for="walkingTimeInput" class="text-center mb-4 font-semibold text-teal-900 text-xl">
+              🚶 Walking
+            </label>
             <div data-testid="walking-input">
               <NumberInput
                 bind:value={walkingTime}
-                placeholder="5 mins"
+                placeholder="5"
                 id="walkingTimeInput"
               />
             </div>
+            <span class="text-sm text-teal-700 mt-2 font-medium">minutes</span>
           </div>
-          <div class="flex flex-col items-center">
-            <div class="text-center mb-2 text-teal-500">Submit</div>
-            <div data-testid="start-timer-button">
-              <Button
-                type="submit"
-                tooltip="Start Timer"
-                disabledText="Fill out the timer"
-                clazz="text-lg text-medium w-24 h-24 p-8"
-                disabled={!isStartEnabled}
-              >
-                {#snippet children()}
-                  Start Timer
-                {/snippet}
-              </Button>
-            </div>
+        </div>
+
+        <!-- Auto Transition Setting -->
+        <div class="flex items-center justify-center mb-10 bg-teal-50 rounded-xl p-5 mx-4 md:mx-0 border border-teal-200 shadow-sm">
+          <label for="autoTransition" class="text-center px-4 text-teal-900 font-semibold cursor-pointer">
+            Auto-start next timer
+          </label>
+          <input
+            type="checkbox"
+            bind:checked={autoTransition}
+            onchange={() => updatePreferences({ autoTransition })}
+            id="autoTransition"
+            class="w-5 h-5 text-teal-600 rounded focus:ring-teal-500 focus:ring-2 focus:ring-offset-2"
+            data-testid="auto-transition-checkbox"
+          />
+        </div>
+
+        <!-- Start Button -->
+        <div class="flex justify-center">
+          <div data-testid="start-timer-button">
+            <Button
+              type="submit"
+              tooltip="Start Timer"
+              disabledText="Enter at least one timer duration"
+              clazz="text-xl font-bold w-36 h-16 px-8 py-4 bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 focus:ring-4 focus:ring-teal-300 focus:ring-offset-2 shadow-lg hover:shadow-xl transition-all duration-200"
+              disabled={!isStartEnabled}
+            >
+              {#snippet children()}
+                Start Timer
+              {/snippet}
+            </Button>
           </div>
-        </form>
-      </div>
+        </div>
+      </form>
     </div>
   </section>
 </div>

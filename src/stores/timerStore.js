@@ -33,7 +33,7 @@ const defaultState = {
   walkingTime: 0,
   needsReset: false,
   allTimersComplete: false,
-  autoTransition: false,
+  autoTransition: true,
   notifications: {
     browser: false,
     audio: true,

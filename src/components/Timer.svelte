@@ -132,22 +132,10 @@
   })
 </script>
 
-<main class="text-red-100 max-w-sm mx-auto" data-testid="timer">
+<main class="min-h-screen flex flex-col max-w-lg mx-auto px-4 py-4" data-testid="timer">
   <audio src="alarm.wav" bind:this={audio} data-testid="timer-audio"></audio>
-  <h1 class="text-center py-8" data-testid="timer-title">
-    {actualTimerState.currentTimer} Timer ({parseInt(countdown / 60)} minutes)
-  </h1>
   
-  <TimerDisplay {countdown} {count} {h} {m} {s} />
-  
-  <TimerControls 
-    {isPaused}
-    isTimerComplete={timerComplete}
-    onreset={handleReset}
-    onpauseResume={handlePauseResume}
-    onnewTimer={handleNewTimer}
-  />
-  
+  <!-- Header Section -->
   {#if timerComplete}
     <TimerCompletion 
       timerState={actualTimerState}
@@ -155,5 +143,39 @@
       onresetAll={handleResetAllTimers}
       onnextTimer={handleNextTimer}
     />
+  {:else}
+    <div class="text-center py-2 px-4 flex-shrink-0">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-teal-100 rounded-full mb-2">
+        {#if actualTimerState.currentTimer === 'sitting'}
+          <span class="text-3xl">🪑</span>
+        {:else if actualTimerState.currentTimer === 'standing'}
+          <span class="text-3xl">🧍</span>
+        {:else if actualTimerState.currentTimer === 'walking'}
+          <span class="text-3xl">🚶</span>
+        {/if}
+      </div>
+      <h1 class="text-xl md:text-2xl font-bold text-teal-900 mb-1 capitalize" data-testid="timer-title">
+        {actualTimerState.currentTimer} Timer
+      </h1>
+      <p class="text-base text-teal-700 font-medium">
+        {parseInt(countdown / 60)} minute{parseInt(countdown / 60) !== 1 ? 's' : ''} total
+      </p>
+    </div>
   {/if}
+  
+  <!-- Main content area that grows to fill space -->
+  <div class="flex-1 flex flex-col justify-center">
+    <TimerDisplay {countdown} {count} {h} {m} {s} />
+  </div>
+  
+  <!-- Controls fixed at bottom -->
+  <div class="flex-shrink-0">
+    <TimerControls 
+      {isPaused}
+      isTimerComplete={timerComplete}
+      onreset={handleReset}
+      onpauseResume={handlePauseResume}
+      onnewTimer={handleNewTimer}
+    />
+  </div>
 </main>

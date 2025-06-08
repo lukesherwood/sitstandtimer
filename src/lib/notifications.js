@@ -74,7 +74,18 @@ export function showTimerNotification(timerType, nextTimer = null) {
 export function showVisualAlert(message, type = 'info', duration = 3000) {
   // Create visual alert element
   const alert = document.createElement('div')
-  alert.className = `fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full`
+  alert.className = `px-6 py-4 rounded-lg shadow-lg transition-all duration-300 max-w-sm w-full mx-4`
+  
+  // Set positioning with important styles to override any CSS
+  alert.style.cssText = `
+    position: fixed !important;
+    top: 16px !important;
+    left: 50% !important;
+    transform: translateX(-50%) translateY(-100%) !important;
+    z-index: 9999 !important;
+    max-width: 24rem !important;
+    width: calc(100% - 2rem) !important;
+  `
   
   // Style based on type
   const styles = {
@@ -100,7 +111,7 @@ export function showVisualAlert(message, type = 'info', duration = 3000) {
   
   // Animate in
   setTimeout(() => {
-    alert.classList.remove('translate-x-full')
+    alert.style.transform = 'translateX(-50%) translateY(0px) !important'
   }, 10)
   
   // Auto remove
@@ -113,7 +124,7 @@ export function showVisualAlert(message, type = 'info', duration = 3000) {
 
 function removeAlert(alert) {
   if (alert && alert.parentNode) {
-    alert.classList.add('translate-x-full')
+    alert.style.transform = 'translateX(-50%) translateY(-100%) !important'
     setTimeout(() => {
       if (alert.parentNode) {
         alert.parentNode.removeChild(alert)
