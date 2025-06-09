@@ -1,7 +1,7 @@
 <script>
   import {
     timerStore,
-    saveLastUsedTimes,
+    updateSettings,
     updatePreferences
   } from "../stores/timerStore.js"
   import Button from "./Button.svelte"
@@ -28,7 +28,7 @@
         sittingTime = state.preferences.lastUsedSitting || ""
         standingTime = state.preferences.lastUsedStanding || ""
         walkingTime = state.preferences.lastUsedWalking || ""
-        autoTransition = state.preferences.autoTransition ?? false
+        autoTransition = state.autoTransition ?? false
       }
       if (state.notifications) {
         notificationSettings = { ...state.notifications }
@@ -53,43 +53,43 @@
       }
     }
 
-    timerStore.update((state) => ({
-      ...state,
+    updateSettings({
       notifications: {
-        ...state.notifications,
+        ...$timerStore.notifications,
         browser: notificationSettings.browser
       }
-    }))
+    })
   }
 
   function updateNotificationSetting(key, value) {
     notificationSettings[key] = value
-    timerStore.update((state) => ({
-      ...state,
-      notifications: { ...state.notifications, [key]: value }
-    }))
+    updateSettings({
+      notifications: { ...$timerStore.notifications, [key]: value }
+    })
   }
 
   function handleSubmit(event) {
     event.preventDefault()
-    saveLastUsedTimes(sittingTime, standingTime, walkingTime)
-    updatePreferences({ autoTransition })
 
-    timerStore.update((state) => ({
-      ...state,
-      currentTimer: (() => {
-        if (sittingTime > 0) return "sitting"
-        if (standingTime > 0) return "standing"
-        if (walkingTime > 0) return "walking"
-        return "sitting" // fallback, shouldn't happen since start is disabled when all are 0
-      })(),
+    const currentTimer =
+      sittingTime > 0 ? "sitting" : standingTime > 0 ? "standing" : "walking"
+
+    updateSettings({
+      currentTimer,
       sittingTime: sittingTime * 60,
       standingTime: standingTime * 60,
       walkingTime: walkingTime * 60,
       needsReset: true,
       allTimersComplete: false,
-      autoTransition: autoTransition
-    }))
+      autoTransition
+    })
+
+    updatePreferences({
+      lastUsedSitting: sittingTime,
+      lastUsedStanding: standingTime,
+      lastUsedWalking: walkingTime
+    })
+
     onstart?.()
   }
 </script>
@@ -258,7 +258,7 @@
                 <input
                   type="checkbox"
                   bind:checked={autoTransition}
-                  onchange={() => updatePreferences({ autoTransition })}
+                  onchange={() => updateSettings({ autoTransition })}
                   id="autoTransition"
                   class="w-5 h-5 text-teal-600 rounded focus:ring-teal-500 focus:ring-2"
                   data-testid="auto-transition-checkbox"

@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, within } from "@testing-library/svelte"
 import SetTime from "@/components/SetTime.svelte"
-import { timerStore } from "@/stores/timerStore.js"
+import { timerStore, updateSettings } from "@/stores/timerStore.js"
 
 vi.mock("@/stores/timerStore.js", () => ({
   timerStore: {
@@ -8,7 +8,7 @@ vi.mock("@/stores/timerStore.js", () => ({
     update: vi.fn(),
     subscribe: vi.fn(() => () => {}) // Return unsubscribe function
   },
-  saveLastUsedTimes: vi.fn(),
+  updateSettings: vi.fn(),
   updatePreferences: vi.fn()
 }))
 
@@ -91,7 +91,7 @@ it("updates timer store with correct values on submit", async () => {
   const startButton = within(startWrapper).getByTestId("button")
   await fireEvent.click(startButton)
 
-  expect(timerStore.update).toHaveBeenCalledWith(expect.any(Function))
+  expect(updateSettings).toHaveBeenCalledWith(expect.any(Object))
 })
 
 it("starts with standing timer when sitting time is not set", async () => {
@@ -109,7 +109,7 @@ it("starts with standing timer when sitting time is not set", async () => {
   const startButton = within(startWrapper).getByTestId("button")
   await fireEvent.click(startButton)
 
-  expect(timerStore.update).toHaveBeenCalledWith(expect.any(Function))
+  expect(updateSettings).toHaveBeenCalledWith(expect.any(Object))
 })
 
 it("starts with walking timer when only walking time is set", async () => {
@@ -123,7 +123,7 @@ it("starts with walking timer when only walking time is set", async () => {
   const startButton = within(startWrapper).getByTestId("button")
   await fireEvent.click(startButton)
 
-  expect(timerStore.update).toHaveBeenCalledWith(expect.any(Function))
+  expect(updateSettings).toHaveBeenCalledWith(expect.any(Object))
 })
 
 it("includes autoTransition setting when checkbox is checked", async () => {
@@ -144,7 +144,7 @@ it("includes autoTransition setting when checkbox is checked", async () => {
   const startButton = within(startWrapper).getByTestId("button")
   await fireEvent.click(startButton)
 
-  expect(timerStore.update).toHaveBeenCalledWith(expect.any(Function))
+  expect(updateSettings).toHaveBeenCalledWith(expect.any(Object))
 })
 
 it("displays health tip information", () => {

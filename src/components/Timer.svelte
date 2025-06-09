@@ -9,13 +9,15 @@
 
   const AUTO_TRANSITION_DELAY = 10000 // 10 seconds
   const TIMER_INTERVAL = 1000 // 1 second
+  const TIMERS = ["sitting", "standing", "walking"]
 
   let timerComplete = $state(false)
   let isPaused = $state(false)
   let audio = $state()
   let interval = $state()
 
-  const actualTimerState = $derived(timerState || $timerStore)
+  // Use timerState prop if provided, otherwise use store
+  const activeState = $derived(timerState || $timerStore)
 
   function clearTimerInterval() {
     if (interval) {
@@ -27,33 +29,27 @@
   let end = $state(0)
   let count = $state(0)
 
-  const countdown = $derived(
-    actualTimerState[`${actualTimerState.currentTimer}Time`]
-  )
+  const countdown = $derived(activeState[`${activeState.currentTimer}Time`])
   const h = $derived(Math.floor(count / 3600))
   const m = $derived(Math.floor((count - h * 3600) / 60))
   const s = $derived(count - h * 3600 - m * 60)
 
   const isLastTimer = $derived.by(() => {
-    // Use completedTimer if available (when timer just completed), otherwise currentTimer
-    const timerToCheck =
-      actualTimerState.completedTimer || actualTimerState.currentTimer
-    const timers = ["sitting", "standing", "walking"]
-    const currentIndex = timers.indexOf(timerToCheck)
-    return !timers.find(
-      (timer, index) =>
-        index > currentIndex && actualTimerState[`${timer}Time`] > 0
+    const timerToCheck = activeState.completedTimer || activeState.currentTimer
+    const currentIndex = TIMERS.indexOf(timerToCheck)
+    return !TIMERS.find(
+      (timer, index) => index > currentIndex && activeState[`${timer}Time`] > 0
     )
   })
 
   $effect(() => {
-    if (actualTimerState.needsReset) {
+    if ($timerStore.needsReset) {
       handleReset()
     }
   })
 
   $effect(() => {
-    if (actualTimerState.allTimersComplete) {
+    if ($timerStore.allTimersComplete) {
       timerComplete = true
     }
   })
@@ -69,23 +65,22 @@
         clearTimerInterval()
 
         // Audio notification
-        if (actualTimerState.notifications?.audio) {
+        if (activeState.notifications?.audio) {
           audio.play()
         }
 
         // Determine next timer
-        const timers = ["sitting", "standing", "walking"]
-        const currentIndex = timers.indexOf(actualTimerState.currentTimer)
-        const nextTimer = timers.find(
+        const currentIndex = TIMERS.indexOf(activeState.currentTimer)
+        const nextTimer = TIMERS.find(
           (timer, index) =>
-            index > currentIndex && actualTimerState[`${timer}Time`] > 0
+            index > currentIndex && activeState[`${timer}Time`] > 0
         )
 
         // Send notifications
         notifyTimerComplete(
-          actualTimerState.currentTimer,
+          activeState.currentTimer,
           nextTimer,
-          actualTimerState.notifications || {
+          activeState.notifications || {
             browser: false,
             audio: true,
             visual: true
@@ -94,7 +89,7 @@
 
         timerComplete = true
 
-        if (actualTimerState.autoTransition) {
+        if (activeState.autoTransition) {
           oncomplete?.()
           if (nextTimer) {
             setTimeout(() => {
@@ -110,7 +105,7 @@
 
   function handleReset() {
     clearTimeout(interval)
-    if (!actualTimerState.autoTransition) {
+    if (!activeState.autoTransition) {
       timerComplete = false
     }
     end = Date.now() + countdown * 1000
@@ -160,9 +155,9 @@
   <!-- Header Section -->
   {#if timerComplete}
     <TimerCompletion
-      timerState={actualTimerState}
+      timerState={activeState}
       {isLastTimer}
-      onresetAll={handleResetAllTimers}
+      onresetAll={handleNewTimer}
       onnextTimer={handleNextTimer}
     />
   {:else}
@@ -170,11 +165,11 @@
       <div
         class="inline-flex items-center justify-center w-16 h-16 bg-teal-100 rounded-full mb-2"
       >
-        {#if actualTimerState.currentTimer === "sitting"}
+        {#if activeState.currentTimer === "sitting"}
           <span class="text-3xl">🪑</span>
-        {:else if actualTimerState.currentTimer === "standing"}
+        {:else if activeState.currentTimer === "standing"}
           <span class="text-3xl">🧍</span>
-        {:else if actualTimerState.currentTimer === "walking"}
+        {:else if activeState.currentTimer === "walking"}
           <span class="text-3xl">🚶</span>
         {/if}
       </div>
@@ -182,7 +177,7 @@
         class="text-xl md:text-2xl font-bold text-teal-900 mb-1 capitalize"
         data-testid="timer-title"
       >
-        {actualTimerState.currentTimer} Timer
+        {activeState.currentTimer} Timer
       </h1>
       <p class="text-base text-teal-700 font-medium">
         {parseInt(countdown / 60)} minute{parseInt(countdown / 60) !== 1

@@ -33,7 +33,8 @@ const defaultState = {
   walkingTime: 0,
   needsReset: false,
   allTimersComplete: false,
-  autoTransition: true,
+  completedTimer: null,
+  autoTransition: false,
   notifications: {
     browser: false,
     audio: true,
@@ -42,8 +43,7 @@ const defaultState = {
   preferences: {
     lastUsedSitting: 0,
     lastUsedStanding: 0,
-    lastUsedWalking: 0,
-    autoTransition: false
+    lastUsedWalking: 0
   },
   stats: {
     totalSessions: 0,
@@ -54,10 +54,18 @@ const defaultState = {
   }
 }
 
-const initialState = {
-  ...defaultState,
-  ...loadFromStorage()
+function createInitialState() {
+  const stored = loadFromStorage()
+  return {
+    ...defaultState,
+    autoTransition: stored?.preferences?.autoTransition ?? false,
+    notifications: { ...defaultState.notifications, ...stored?.notifications },
+    preferences: { ...defaultState.preferences, ...stored?.preferences },
+    stats: { ...defaultState.stats, ...stored?.stats }
+  }
 }
+
+const initialState = createInitialState()
 
 export const timerStore = writable(initialState)
 
@@ -71,17 +79,15 @@ timerStore.subscribe((state) => {
 })
 
 export function resetTimer() {
-  timerStore.update((state) => ({
-    ...state,
-    needsReset: true
-  }))
+  timerStore.update((state) => ({ ...state, needsReset: true }))
 }
 
+const TIMERS = ["sitting", "standing", "walking"]
+
 function getNextTimer(state) {
-  const timers = ["sitting", "standing", "walking"]
-  const currentIndex = timers.indexOf(state.currentTimer)
+  const currentIndex = TIMERS.indexOf(state.currentTimer)
   return (
-    timers.find(
+    TIMERS.find(
       (timer, index) => index > currentIndex && state[`${timer}Time`] > 0
     ) || null
   )
@@ -90,36 +96,29 @@ function getNextTimer(state) {
 export function completeCurrentTimer() {
   timerStore.update((state) => {
     const nextTimer = getNextTimer(state)
-
     const timerType = state.currentTimer
-    const timeCompleted = state[`${timerType}Time`]
-    const updatedStats = {
-      ...state.stats,
-      [`total${timerType.charAt(0).toUpperCase() + timerType.slice(1)}Time`]:
-        state.stats[
-          `total${timerType.charAt(0).toUpperCase() + timerType.slice(1)}Time`
-        ] + timeCompleted,
-      lastUsed: new Date().toISOString()
+    const statKey = `total${timerType.charAt(0).toUpperCase() + timerType.slice(1)}Time`
+
+    const baseUpdate = {
+      ...state,
+      completedTimer: timerType,
+      stats: {
+        ...state.stats,
+        [statKey]: state.stats[statKey] + state[`${timerType}Time`],
+        lastUsed: new Date().toISOString()
+      }
     }
 
     if (nextTimer) {
-      return {
-        ...state,
-        currentTimer: nextTimer,
-        completedTimer: timerType,
-        needsReset: true,
-        stats: updatedStats
-      }
-    } else {
-      return {
-        ...state,
-        completedTimer: timerType,
-        allTimersComplete: true,
-        needsReset: false,
-        stats: {
-          ...updatedStats,
-          totalSessions: updatedStats.totalSessions + 1
-        }
+      return { ...baseUpdate, currentTimer: nextTimer, needsReset: true }
+    }
+
+    return {
+      ...baseUpdate,
+      allTimersComplete: true,
+      stats: {
+        ...baseUpdate.stats,
+        totalSessions: baseUpdate.stats.totalSessions + 1
       }
     }
   })
@@ -127,42 +126,24 @@ export function completeCurrentTimer() {
 
 export function startNewTimer() {
   timerStore.update((state) => ({
+    ...state,
     currentTimer: "sitting",
     completedTimer: null,
     sittingTime: 0,
     standingTime: 0,
     walkingTime: 0,
     needsReset: false,
-    allTimersComplete: false,
-    autoTransition: state.preferences.autoTransition,
-    notifications: state.notifications,
-    preferences: state.preferences,
-    stats: state.stats
+    allTimersComplete: false
   }))
 }
 
-export function updateNotificationSettings(settings) {
-  timerStore.update((state) => ({
-    ...state,
-    notifications: { ...state.notifications, ...settings }
-  }))
+export function updateSettings(updates) {
+  timerStore.update((state) => ({ ...state, ...updates }))
 }
 
 export function updatePreferences(prefs) {
   timerStore.update((state) => ({
     ...state,
     preferences: { ...state.preferences, ...prefs }
-  }))
-}
-
-export function saveLastUsedTimes(sitting, standing, walking) {
-  timerStore.update((state) => ({
-    ...state,
-    preferences: {
-      ...state.preferences,
-      lastUsedSitting: sitting,
-      lastUsedStanding: standing,
-      lastUsedWalking: walking
-    }
   }))
 }
