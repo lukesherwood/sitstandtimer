@@ -1,8 +1,8 @@
 <script>
   import Button from "./Button.svelte"
 
-  let { 
-    isPaused, 
+  let {
+    isPaused,
     isTimerComplete = false,
     onreset,
     onpauseResume,
@@ -11,16 +11,19 @@
 </script>
 
 <!-- Timer Controls Section -->
-<div class="bg-teal-50 rounded-lg p-3 mx-4 mb-4 border border-teal-200 shadow-sm">
-  <h3 class="text-sm font-semibold text-teal-900 text-center mb-3">Timer Controls</h3>
-  
+<div
+  class="bg-teal-50 rounded-lg p-3 mx-4 mb-4 border border-teal-200 shadow-sm"
+>
+  <h3 class="text-sm font-semibold text-teal-900 text-center mb-3">
+    Timer Controls
+  </h3>
+
   <!-- Mobile-first layout: stacked on mobile, horizontal on desktop -->
   <div class="grid grid-cols-3 gap-3">
-    
     <!-- Reset Button -->
     <div class="flex flex-col items-center" data-testid="reset-button">
-      <Button 
-        onclick={onreset} 
+      <Button
+        onclick={onreset}
         tooltip="Reset Timer"
         clazz="w-12 h-12 mb-1 bg-teal-600 hover:bg-teal-700"
       >
@@ -43,7 +46,7 @@
       </Button>
       <span class="text-xs font-medium text-teal-800 text-center">Reset</span>
     </div>
-    
+
     <!-- Pause/Resume Button -->
     <div class="flex flex-col items-center" data-testid="pause-resume-button">
       <Button
@@ -51,7 +54,11 @@
         tooltip={isPaused ? "Resume Timer" : "Pause Timer"}
         disabled={isTimerComplete}
         disabledText="Timer has ended"
-        clazz="w-12 h-12 mb-1 {isTimerComplete ? 'bg-gray-400' : isPaused ? 'bg-green-600 hover:bg-green-700' : 'bg-amber-600 hover:bg-amber-700'}"
+        clazz="w-12 h-12 mb-1 {isTimerComplete
+          ? 'bg-gray-400'
+          : isPaused
+            ? 'bg-green-600 hover:bg-green-700'
+            : 'bg-amber-600 hover:bg-amber-700'}"
       >
         {#snippet children()}
           {#if isPaused}
@@ -90,11 +97,11 @@
         {/if}
       </span>
     </div>
-    
+
     <!-- New Timer Button -->
     <div class="flex flex-col items-center" data-testid="new-timer-button">
-      <Button 
-        onclick={onnewTimer} 
+      <Button
+        onclick={onnewTimer}
         tooltip="Start New Timer"
         clazz="w-16 h-16 mb-3 bg-teal-600 hover:bg-teal-700"
       >
@@ -115,8 +122,9 @@
           </svg>
         {/snippet}
       </Button>
-      <span class="text-xs font-medium text-teal-800 text-center">New Timer</span>
+      <span class="text-xs font-medium text-teal-800 text-center"
+        >New Timer</span
+      >
     </div>
-    
   </div>
 </div>

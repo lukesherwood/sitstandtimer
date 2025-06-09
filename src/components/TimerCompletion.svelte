@@ -8,18 +8,25 @@
 <div class="mx-4 mb-4">
   {#if isLastTimer}
     <!-- All Timers Complete -->
-    <div class="bg-gradient-to-r from-green-50 to-teal-50 border-2 border-green-200 rounded-xl p-4 text-center shadow-lg" data-testid="all-complete-message">
+    <div
+      class="bg-gradient-to-r from-green-50 to-teal-50 border-2 border-green-200 rounded-xl p-4 text-center shadow-lg"
+      data-testid="all-complete-message"
+    >
       <div class="flex justify-center mb-3">
-        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+        <div
+          class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center"
+        >
           <span class="text-2xl">🎉</span>
         </div>
       </div>
       <h2 class="text-xl font-bold text-teal-900 mb-2">Congratulations!</h2>
-      <p class="text-base text-teal-800 mb-4">You've completed all your movement timers. Well done!</p>
-      
+      <p class="text-base text-teal-800 mb-4">
+        You've completed all your movement timers. Well done!
+      </p>
+
       <div class="flex flex-col items-center" data-testid="reset-all-button">
-        <Button 
-          onclick={onresetAll} 
+        <Button
+          onclick={onresetAll}
           tooltip="Start New Session"
           clazz="w-16 h-16 mb-2 bg-green-600 hover:bg-green-700 text-lg"
         >
@@ -40,38 +47,44 @@
             </svg>
           {/snippet}
         </Button>
-        <span class="text-sm font-semibold text-teal-800">Start New Session</span>
+        <span class="text-sm font-semibold text-teal-800"
+          >Start New Session</span
+        >
       </div>
     </div>
-    
   {:else}
     <!-- Single Timer Complete -->
-    <div class="bg-gradient-to-r from-teal-50 to-blue-50 border-2 border-teal-200 rounded-xl p-4 text-center shadow-lg" data-testid="timer-complete-message">
+    <div
+      class="bg-gradient-to-r from-teal-50 to-blue-50 border-2 border-teal-200 rounded-xl p-4 text-center shadow-lg"
+      data-testid="timer-complete-message"
+    >
       <div class="flex justify-center mb-3">
-        <div class="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center">
-          {#if timerState.completedTimer === 'sitting'}
+        <div
+          class="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center"
+        >
+          {#if timerState.completedTimer === "sitting"}
             <span class="text-2xl">🪑</span>
-          {:else if timerState.completedTimer === 'standing'}
+          {:else if timerState.completedTimer === "standing"}
             <span class="text-2xl">🧍</span>
-          {:else if timerState.completedTimer === 'walking'}
+          {:else if timerState.completedTimer === "walking"}
             <span class="text-2xl">🚶</span>
           {/if}
         </div>
       </div>
-      
+
       <h2 class="text-xl font-bold text-teal-900 mb-2 capitalize">
         {timerState.completedTimer} Timer Complete!
       </h2>
-      
+
       <div class="text-base text-teal-800 mb-4">
-        {#if timerState.completedTimer === 'sitting'}
+        {#if timerState.completedTimer === "sitting"}
           <p>Great job! Time to stand up and move your body.</p>
-        {:else if timerState.completedTimer === 'standing'}
+        {:else if timerState.completedTimer === "standing"}
           <p>Excellent! You've given your body a good stretch.</p>
-        {:else if timerState.completedTimer === 'walking'}
+        {:else if timerState.completedTimer === "walking"}
           <p>Well done! You've completed your movement break.</p>
         {/if}
-        
+
         {#if timerState.autoTransition}
           <div class="mt-4 p-3 bg-teal-100 rounded-lg">
             <p class="text-sm font-medium text-teal-800">
@@ -80,11 +93,11 @@
           </div>
         {/if}
       </div>
-      
+
       {#if !timerState.autoTransition}
         <div class="flex flex-col items-center" data-testid="next-timer-button">
-          <Button 
-            onclick={onnextTimer} 
+          <Button
+            onclick={onnextTimer}
             tooltip="Continue to Next Timer"
             clazz="w-16 h-16 mb-2 bg-teal-600 hover:bg-teal-700 text-lg"
           >

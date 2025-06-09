@@ -95,9 +95,7 @@ describe("when timer is not the last timer", () => {
       }
     })
 
-    expect(
-      screen.getByText(/automatically/i)
-    ).toBeInTheDocument()
+    expect(screen.getByText(/automatically/i)).toBeInTheDocument()
   })
 
   it("calls onnextTimer callback when next timer button is clicked", async () => {
@@ -126,7 +124,7 @@ describe("when timer is not the last timer", () => {
       // Setup state after sitting timer completed in a 3-timer sequence
       const timerState = {
         currentTimer: "standing",
-        completedTimer: "sitting", 
+        completedTimer: "sitting",
         sittingTime: 60,
         standingTime: 60,
         walkingTime: 60, // Walking still exists
@@ -141,7 +139,7 @@ describe("when timer is not the last timer", () => {
       const isLastTimer = !timers.find(
         (timer, index) => index > currentIndex && timerState[`${timer}Time`] > 0
       )
-      
+
       // This should be FALSE because standing (index 1) and walking (index 2) exist
       expect(isLastTimer).toBe(false)
 
@@ -156,13 +154,15 @@ describe("when timer is not the last timer", () => {
       })
 
       // Should show individual completion, not all-complete
-      expect(screen.queryByTestId("all-complete-message")).not.toBeInTheDocument()
+      expect(
+        screen.queryByTestId("all-complete-message")
+      ).not.toBeInTheDocument()
       expect(screen.getByTestId("timer-complete-message")).toBeInTheDocument()
       expect(screen.getByText(/sitting timer complete/i)).toBeInTheDocument()
     })
 
     it("isLastTimer should be false when completedTimer=standing and walking still exists", () => {
-      // Setup state after standing timer completed in a 3-timer sequence  
+      // Setup state after standing timer completed in a 3-timer sequence
       const timerState = {
         currentTimer: "walking",
         completedTimer: "standing",
@@ -180,7 +180,7 @@ describe("when timer is not the last timer", () => {
       const isLastTimer = !timers.find(
         (timer, index) => index > currentIndex && timerState[`${timer}Time`] > 0
       )
-      
+
       // This should be FALSE because walking (index 2) still exists
       expect(isLastTimer).toBe(false)
 
@@ -194,7 +194,9 @@ describe("when timer is not the last timer", () => {
       })
 
       // Should show individual completion, not all-complete
-      expect(screen.queryByTestId("all-complete-message")).not.toBeInTheDocument()
+      expect(
+        screen.queryByTestId("all-complete-message")
+      ).not.toBeInTheDocument()
       expect(screen.getByTestId("timer-complete-message")).toBeInTheDocument()
       expect(screen.getByText(/standing timer complete/i)).toBeInTheDocument()
     })
@@ -218,7 +220,7 @@ describe("when timer is not the last timer", () => {
       const isLastTimer = !timers.find(
         (timer, index) => index > currentIndex && timerState[`${timer}Time`] > 0
       )
-      
+
       // This should be TRUE because no timers exist after walking
       expect(isLastTimer).toBe(true)
 
@@ -233,12 +235,14 @@ describe("when timer is not the last timer", () => {
 
       // Should show all-complete message
       expect(screen.getByTestId("all-complete-message")).toBeInTheDocument()
-      expect(screen.queryByTestId("timer-complete-message")).not.toBeInTheDocument()
+      expect(
+        screen.queryByTestId("timer-complete-message")
+      ).not.toBeInTheDocument()
     })
 
     it("reproduces bug: 2-timer sequence incorrectly shows all-complete after first", () => {
       // This reproduces the exact bug: sitting+standing sequence shows all-complete after sitting
-      
+
       // OLD (buggy) logic: uses currentTimer instead of completedTimer
       const timerState = {
         currentTimer: "standing", // This is what the buggy logic was checking
@@ -255,16 +259,19 @@ describe("when timer is not the last timer", () => {
       const timers = ["sitting", "standing", "walking"]
       const buggyCurrentIndex = timers.indexOf(buggyTimerToCheck) // index 1 for "standing"
       const buggyIsLastTimer = !timers.find(
-        (timer, index) => index > buggyCurrentIndex && timerState[`${timer}Time`] > 0
+        (timer, index) =>
+          index > buggyCurrentIndex && timerState[`${timer}Time`] > 0
       )
       // This would be TRUE because no timers exist after "standing" - WRONG!
       expect(buggyIsLastTimer).toBe(true)
 
       // FIXED LOGIC (what should happen after the fix)
-      const fixedTimerToCheck = timerState.completedTimer || timerState.currentTimer // "sitting"
+      const fixedTimerToCheck =
+        timerState.completedTimer || timerState.currentTimer // "sitting"
       const fixedCurrentIndex = timers.indexOf(fixedTimerToCheck) // index 0 for "sitting"
       const fixedIsLastTimer = !timers.find(
-        (timer, index) => index > fixedCurrentIndex && timerState[`${timer}Time`] > 0
+        (timer, index) =>
+          index > fixedCurrentIndex && timerState[`${timer}Time`] > 0
       )
       // This should be FALSE because "standing" (index 1) still exists - CORRECT!
       expect(fixedIsLastTimer).toBe(false)
@@ -280,7 +287,9 @@ describe("when timer is not the last timer", () => {
       })
 
       // Should show individual completion, not all-complete
-      expect(screen.queryByTestId("all-complete-message")).not.toBeInTheDocument()
+      expect(
+        screen.queryByTestId("all-complete-message")
+      ).not.toBeInTheDocument()
       expect(screen.getByTestId("timer-complete-message")).toBeInTheDocument()
       expect(screen.getByText(/sitting timer complete/i)).toBeInTheDocument()
     })
@@ -310,11 +319,15 @@ describe("when timer is not the last timer", () => {
       // Should show all-complete message
       expect(screen.getByTestId("all-complete-message")).toBeInTheDocument()
       expect(screen.getByText(/congratulations/i)).toBeInTheDocument()
-      expect(screen.getByText(/completed all your movement timers/i)).toBeInTheDocument()
-      
+      expect(
+        screen.getByText(/completed all your movement timers/i)
+      ).toBeInTheDocument()
+
       // Should NOT show individual timer completion
-      expect(screen.queryByTestId("timer-complete-message")).not.toBeInTheDocument()
-      
+      expect(
+        screen.queryByTestId("timer-complete-message")
+      ).not.toBeInTheDocument()
+
       // Should show reset all button
       expect(screen.getByTestId("reset-all-button")).toBeInTheDocument()
     })
@@ -342,7 +355,7 @@ describe("when timer is not the last timer", () => {
       // Should show all-complete message regardless of auto-transition mode
       expect(screen.getByTestId("all-complete-message")).toBeInTheDocument()
       expect(screen.getByText(/congratulations/i)).toBeInTheDocument()
-      
+
       // Should show reset all button (even in auto mode, user needs option to restart)
       expect(screen.getByTestId("reset-all-button")).toBeInTheDocument()
     })
@@ -371,7 +384,7 @@ describe("when timer is not the last timer", () => {
       expect(screen.getByText("🎉")).toBeInTheDocument() // Celebration emoji
       expect(screen.getByText(/congratulations/i)).toBeInTheDocument()
       expect(screen.getByText(/well done/i)).toBeInTheDocument()
-      
+
       // Check button text
       expect(screen.getByText(/start new session/i)).toBeInTheDocument()
     })
@@ -413,7 +426,7 @@ describe("when timer is not the last timer", () => {
         currentTimer: "walking",
         completedTimer: "walking",
         sittingTime: 60,
-        standingTime: 60, 
+        standingTime: 60,
         walkingTime: 60,
         allTimersComplete: true,
         autoTransition: false // Even in manual mode, no next timer when all complete
@@ -430,7 +443,7 @@ describe("when timer is not the last timer", () => {
 
       // Should NOT show next timer button since all are complete
       expect(screen.queryByTestId("next-timer-button")).not.toBeInTheDocument()
-      
+
       // Should show reset all button instead
       expect(screen.getByTestId("reset-all-button")).toBeInTheDocument()
     })

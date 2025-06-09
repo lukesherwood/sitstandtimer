@@ -16,7 +16,7 @@ it("displays initial value correctly", async () => {
 
   const input = screen.getByTestId("number-input")
   expect(input).toHaveValue(10)
-  
+
   // Test with different initial value
   render(NumberInput, { props: { value: 25 } })
   const inputs = screen.getAllByTestId("number-input")
@@ -49,7 +49,9 @@ it("applies placeholder when provided", () => {
 })
 
 it("renders number input with correct type and attributes", () => {
-  render(NumberInput, { props: { value: 5, min: 0, step: 1, placeholder: "Enter value" } })
+  render(NumberInput, {
+    props: { value: 5, min: 0, step: 1, placeholder: "Enter value" }
+  })
 
   const input = screen.getByTestId("number-input")
   expect(input).toBeInTheDocument()

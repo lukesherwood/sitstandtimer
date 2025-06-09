@@ -10,12 +10,12 @@
     if (countdown > 0) {
       // Progress from 0 (start) to 1 (complete)
       const progressComplete = Math.max(0, (countdown - count) / countdown)
-      
+
       offset = 1 - progressComplete
-      
+
       rotation = progressComplete * 360
     } else {
-      offset = 0 
+      offset = 0
       rotation = 360
     }
   })
@@ -23,13 +23,16 @@
 
 <!-- Timer Display Section -->
 <div class="flex flex-col items-center">
-  
   <!-- Large Time Display -->
   <div class="bg-white rounded-3xl p-8 mb-6 shadow-xl border-4 border-teal-100">
     <div class="text-center">
-      <div class="text-6xl md:text-7xl font-bold text-teal-900 font-mono tracking-wider mb-2">
+      <div
+        class="text-6xl md:text-7xl font-bold text-teal-900 font-mono tracking-wider mb-2"
+      >
         {#if countdown >= 3600}
-          {h.toString().padStart(2, "0")}:{m.toString().padStart(2, "0")}:{s.toString().padStart(2, "0")}
+          {h.toString().padStart(2, "0")}:{m.toString().padStart(2, "0")}:{s
+            .toString()
+            .padStart(2, "0")}
         {:else}
           {m.toString().padStart(2, "0")}:{s.toString().padStart(2, "0")}
         {/if}
@@ -43,7 +46,7 @@
       </div>
     </div>
   </div>
-  
+
   <!-- Circular Progress Indicator -->
   <div class="relative">
     <svg
@@ -56,14 +59,14 @@
       aria-hidden="true"
     >
       <!-- Background Circle -->
-      <circle 
-        stroke="#d1fae5" 
-        stroke-width="6" 
-        fill="none" 
-        r="40" 
+      <circle
+        stroke="#d1fae5"
+        stroke-width="6"
+        fill="none"
+        r="40"
         opacity="0.3"
       />
-      
+
       <!-- Progress Circle -->
       <circle
         stroke="#0f766e"
@@ -77,17 +80,20 @@
         style="transition: stroke-dashoffset 0.8s ease-out;"
         class="drop-shadow-sm"
       />
-      
+
       <!-- Progress Indicator Dot -->
       <g fill="#0f766e" stroke="none">
-        <g transform="rotate({rotation + 90})" style="transition: transform 0.8s ease-out;">
+        <g
+          transform="rotate({rotation + 90})"
+          style="transition: transform 0.8s ease-out;"
+        >
           <g transform="translate(0 -40)">
-            <circle r="5" class="drop-shadow"/>
+            <circle r="5" class="drop-shadow" />
           </g>
         </g>
       </g>
     </svg>
-    
+
     <!-- Progress Percentage -->
     <div class="absolute inset-0 flex items-center justify-center">
       <div class="text-center">
@@ -98,9 +104,10 @@
       </div>
     </div>
   </div>
-  
+
   <!-- Screen Reader Announcements -->
   <div class="sr-only" aria-live="polite" aria-atomic="true">
-    Time remaining: {#if countdown >= 3600}{h} hours, {/if}{m} minutes, {s} seconds
+    Time remaining: {#if countdown >= 3600}{h} hours,
+    {/if}{m} minutes, {s} seconds
   </div>
 </div>

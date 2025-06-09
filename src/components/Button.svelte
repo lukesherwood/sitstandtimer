@@ -10,11 +10,11 @@
   } = $props()
 
   let showTooltip = $state(false)
-  
+
   function handleClick() {
     onclick?.()
   }
-  
+
   const tooltipText = $derived(disabled ? disabledText : tooltip)
 </script>
 

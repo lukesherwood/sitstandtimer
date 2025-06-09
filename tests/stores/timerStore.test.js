@@ -1,15 +1,20 @@
-import { get } from 'svelte/store'
-import { timerStore, resetTimer, completeCurrentTimer, startNewTimer } from '@/stores/timerStore.js'
+import { get } from "svelte/store"
+import {
+  timerStore,
+  resetTimer,
+  completeCurrentTimer,
+  startNewTimer
+} from "@/stores/timerStore.js"
 
-describe('Timer Store', () => {
+describe("Timer Store", () => {
   beforeEach(() => {
     // Reset to initial state before each test
     startNewTimer()
   })
 
-  it('should initialize with default state', () => {
+  it("should initialize with default state", () => {
     const state = get(timerStore)
-    expect(state.currentTimer).toBe('sitting')
+    expect(state.currentTimer).toBe("sitting")
     expect(state.sittingTime).toBe(0)
     expect(state.standingTime).toBe(0)
     expect(state.walkingTime).toBe(0)
@@ -18,15 +23,15 @@ describe('Timer Store', () => {
     expect(state.autoTransition).toBe(false)
   })
 
-  it('should set needsReset to true when resetTimer is called', () => {
+  it("should set needsReset to true when resetTimer is called", () => {
     resetTimer()
     const state = get(timerStore)
     expect(state.needsReset).toBe(true)
   })
 
-  it('should move to next timer when completeCurrentTimer is called', () => {
+  it("should move to next timer when completeCurrentTimer is called", () => {
     // Set up timers with sitting and standing having time
-    timerStore.update(state => ({
+    timerStore.update((state) => ({
       ...state,
       sittingTime: 300,
       standingTime: 180,
@@ -35,15 +40,15 @@ describe('Timer Store', () => {
 
     completeCurrentTimer()
     const state = get(timerStore)
-    expect(state.currentTimer).toBe('standing')
+    expect(state.currentTimer).toBe("standing")
     expect(state.needsReset).toBe(true)
   })
 
-  it('should mark all timers complete when no next timer exists', () => {
+  it("should mark all timers complete when no next timer exists", () => {
     // Set up with only sitting timer having time
-    timerStore.update(state => ({
+    timerStore.update((state) => ({
       ...state,
-      currentTimer: 'sitting',
+      currentTimer: "sitting",
       sittingTime: 300,
       standingTime: 0,
       walkingTime: 0
@@ -55,11 +60,11 @@ describe('Timer Store', () => {
     expect(state.needsReset).toBe(false)
   })
 
-  it('should reset all state when startNewTimer is called', () => {
+  it("should reset all state when startNewTimer is called", () => {
     // Modify state first
-    timerStore.update(state => ({
+    timerStore.update((state) => ({
       ...state,
-      currentTimer: 'standing',
+      currentTimer: "standing",
       sittingTime: 300,
       standingTime: 180,
       allTimersComplete: true,
@@ -68,7 +73,7 @@ describe('Timer Store', () => {
 
     startNewTimer()
     const state = get(timerStore)
-    expect(state.currentTimer).toBe('sitting')
+    expect(state.currentTimer).toBe("sitting")
     expect(state.sittingTime).toBe(0)
     expect(state.standingTime).toBe(0)
     expect(state.walkingTime).toBe(0)
@@ -77,11 +82,11 @@ describe('Timer Store', () => {
     expect(state.autoTransition).toBe(false)
   })
 
-  describe('Timer Completion Flow Scenarios', () => {
-    describe('Single Timer Scenarios', () => {
-      it('shows sitting complete when only sitting timer finishes', () => {
+  describe("Timer Completion Flow Scenarios", () => {
+    describe("Single Timer Scenarios", () => {
+      it("shows sitting complete when only sitting timer finishes", () => {
         // Setup: sitting timer only
-        timerStore.update(state => ({
+        timerStore.update((state) => ({
           ...state,
           currentTimer: "sitting",
           sittingTime: 60,
@@ -91,14 +96,14 @@ describe('Timer Store', () => {
 
         completeCurrentTimer()
         const state = get(timerStore)
-        
+
         expect(state.completedTimer).toBe("sitting")
         expect(state.allTimersComplete).toBe(true)
       })
 
-      it('shows standing complete when only standing timer finishes', () => {
+      it("shows standing complete when only standing timer finishes", () => {
         // Setup: standing timer only
-        timerStore.update(state => ({
+        timerStore.update((state) => ({
           ...state,
           currentTimer: "standing",
           sittingTime: 0,
@@ -108,16 +113,16 @@ describe('Timer Store', () => {
 
         completeCurrentTimer()
         const state = get(timerStore)
-        
+
         expect(state.completedTimer).toBe("standing")
         expect(state.allTimersComplete).toBe(true)
       })
     })
 
-    describe('Two Timer Scenarios', () => {
-      it('sitting then standing: shows sitting complete first, standing complete last', () => {
+    describe("Two Timer Scenarios", () => {
+      it("sitting then standing: shows sitting complete first, standing complete last", () => {
         // Setup: sitting and standing timers
-        timerStore.update(state => ({
+        timerStore.update((state) => ({
           ...state,
           currentTimer: "sitting",
           sittingTime: 60,
@@ -128,7 +133,7 @@ describe('Timer Store', () => {
         // Complete sitting timer
         completeCurrentTimer()
         let state = get(timerStore)
-        
+
         expect(state.completedTimer).toBe("sitting")
         expect(state.currentTimer).toBe("standing")
         expect(state.allTimersComplete).toBe(false) // Key test: should NOT be complete yet
@@ -141,9 +146,9 @@ describe('Timer Store', () => {
         expect(state.allTimersComplete).toBe(true) // NOW it should be complete
       })
 
-      it('sitting then walking: shows sitting complete first, walking complete last', () => {
+      it("sitting then walking: shows sitting complete first, walking complete last", () => {
         // Setup: sitting and walking timers
-        timerStore.update(state => ({
+        timerStore.update((state) => ({
           ...state,
           currentTimer: "sitting",
           sittingTime: 60,
@@ -154,7 +159,7 @@ describe('Timer Store', () => {
         // Complete sitting timer
         completeCurrentTimer()
         let state = get(timerStore)
-        
+
         expect(state.completedTimer).toBe("sitting")
         expect(state.currentTimer).toBe("walking")
         expect(state.allTimersComplete).toBe(false) // Should NOT be complete yet
@@ -167,9 +172,9 @@ describe('Timer Store', () => {
         expect(state.allTimersComplete).toBe(true) // NOW it should be complete
       })
 
-      it('standing then walking: shows standing complete first, walking complete last', () => {
+      it("standing then walking: shows standing complete first, walking complete last", () => {
         // Setup: standing and walking timers (no sitting)
-        timerStore.update(state => ({
+        timerStore.update((state) => ({
           ...state,
           currentTimer: "standing",
           sittingTime: 0,
@@ -180,7 +185,7 @@ describe('Timer Store', () => {
         // Complete standing timer
         completeCurrentTimer()
         let state = get(timerStore)
-        
+
         expect(state.completedTimer).toBe("standing")
         expect(state.currentTimer).toBe("walking")
         expect(state.allTimersComplete).toBe(false) // Should NOT be complete yet
@@ -194,10 +199,10 @@ describe('Timer Store', () => {
       })
     })
 
-    describe('Three Timer Scenarios', () => {
-      it('sitting -> standing -> walking: shows correct completion sequence', () => {
+    describe("Three Timer Scenarios", () => {
+      it("sitting -> standing -> walking: shows correct completion sequence", () => {
         // Setup: all three timers
-        timerStore.update(state => ({
+        timerStore.update((state) => ({
           ...state,
           currentTimer: "sitting",
           sittingTime: 60,
@@ -208,7 +213,7 @@ describe('Timer Store', () => {
         // Complete sitting timer
         completeCurrentTimer()
         let state = get(timerStore)
-        
+
         expect(state.completedTimer).toBe("sitting")
         expect(state.currentTimer).toBe("standing")
         expect(state.allTimersComplete).toBe(false) // Should NOT be complete yet
@@ -217,7 +222,7 @@ describe('Timer Store', () => {
         completeCurrentTimer()
         state = get(timerStore)
 
-        expect(state.completedTimer).toBe("standing") 
+        expect(state.completedTimer).toBe("standing")
         expect(state.currentTimer).toBe("walking")
         expect(state.allTimersComplete).toBe(false) // STILL should NOT be complete yet
 
@@ -230,10 +235,10 @@ describe('Timer Store', () => {
       })
     })
 
-    describe('Edge Cases', () => {
-      it('handles zero-time timers correctly', () => {
+    describe("Edge Cases", () => {
+      it("handles zero-time timers correctly", () => {
         // Setup: sitting and walking only (standing = 0)
-        timerStore.update(state => ({
+        timerStore.update((state) => ({
           ...state,
           currentTimer: "sitting",
           sittingTime: 60,
@@ -244,7 +249,7 @@ describe('Timer Store', () => {
         // Complete sitting timer
         completeCurrentTimer()
         let state = get(timerStore)
-        
+
         expect(state.completedTimer).toBe("sitting")
         expect(state.currentTimer).toBe("walking") // Should skip standing
         expect(state.allTimersComplete).toBe(false)
@@ -259,10 +264,10 @@ describe('Timer Store', () => {
     })
   })
 
-  describe('All Timers Completed Functionality', () => {
-    it('should show all-complete state after final timer in auto-transition mode', () => {
+  describe("All Timers Completed Functionality", () => {
+    it("should show all-complete state after final timer in auto-transition mode", () => {
       // Setup: 2-timer sequence with auto-transition enabled
-      timerStore.update(state => ({
+      timerStore.update((state) => ({
         ...state,
         currentTimer: "standing", // Final timer
         completedTimer: "sitting", // Previous timer was completed
@@ -277,18 +282,21 @@ describe('Timer Store', () => {
       completeCurrentTimer()
       const state = get(timerStore)
 
-      // Should be in all-complete state
+      // Should be in all-complete state but NOT automatically return to setup
       expect(state.completedTimer).toBe("standing")
       expect(state.allTimersComplete).toBe(true)
       expect(state.needsReset).toBe(false) // No more timers to reset to
-      
+
       // Auto-transition mode shouldn't affect the completion state
       expect(state.autoTransition).toBe(true)
+
+      // In auto-mode, should stay in timer view until user clicks "New Timer"
+      // The Main component should NOT automatically switch to SetTime
     })
 
-    it('should show all-complete state after final timer in manual mode', () => {
+    it("should show all-complete state after final timer in manual mode", () => {
       // Setup: 2-timer sequence with auto-transition disabled
-      timerStore.update(state => ({
+      timerStore.update((state) => ({
         ...state,
         currentTimer: "walking", // Final timer
         completedTimer: "standing", // Previous timer was completed
@@ -307,16 +315,16 @@ describe('Timer Store', () => {
       expect(state.completedTimer).toBe("walking")
       expect(state.allTimersComplete).toBe(true)
       expect(state.needsReset).toBe(false) // No more timers to reset to
-      
+
       // Manual mode shouldn't affect the completion state
       expect(state.autoTransition).toBe(false)
     })
 
-    it('should maintain completedTimer info when all timers are complete', () => {
+    it("should maintain completedTimer info when all timers are complete", () => {
       // This test ensures the UI can show "Walking Timer Complete!" even when allTimersComplete = true
-      
+
       // Setup: single walking timer (simulate completion of sitting/standing already)
-      timerStore.update(state => ({
+      timerStore.update((state) => ({
         ...state,
         currentTimer: "walking",
         sittingTime: 0,
@@ -332,15 +340,15 @@ describe('Timer Store', () => {
       // Should preserve both completion info AND all-complete status
       expect(state.completedTimer).toBe("walking")
       expect(state.allTimersComplete).toBe(true)
-      
+
       // This allows the UI to show both:
       // 1. "Walking Timer Complete!" message (from completedTimer)
       // 2. "All Timers Complete!" celebration (from allTimersComplete + isLastTimer)
     })
 
-    it('should handle session stats correctly when all timers complete', () => {
+    it("should handle session stats correctly when all timers complete", () => {
       // Setup: complete sequence of timers
-      timerStore.update(state => ({
+      timerStore.update((state) => ({
         ...state,
         currentTimer: "sitting",
         sittingTime: 60,
@@ -361,7 +369,7 @@ describe('Timer Store', () => {
       expect(state.allTimersComplete).toBe(false)
       expect(state.stats.totalSessions).toBe(0) // Session not complete yet
 
-      // Complete standing  
+      // Complete standing
       completeCurrentTimer()
       state = get(timerStore)
       expect(state.allTimersComplete).toBe(false)
@@ -370,7 +378,7 @@ describe('Timer Store', () => {
       // Complete walking (final timer)
       completeCurrentTimer()
       state = get(timerStore)
-      
+
       expect(state.allTimersComplete).toBe(true)
       expect(state.stats.totalSessions).toBe(1) // Session should increment when all complete
       expect(state.stats.totalSittingTime).toBe(60)

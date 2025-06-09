@@ -2,13 +2,13 @@ import { writable } from "svelte/store"
 
 // Local storage helpers
 function loadFromStorage() {
-  if (typeof window !== 'undefined') {
-    const stored = localStorage.getItem('sitstand-timer-data')
+  if (typeof window !== "undefined") {
+    const stored = localStorage.getItem("sitstand-timer-data")
     if (stored) {
       try {
         return JSON.parse(stored)
       } catch (e) {
-        console.warn('Failed to parse stored timer data:', e)
+        console.warn("Failed to parse stored timer data:", e)
       }
     }
   }
@@ -16,11 +16,11 @@ function loadFromStorage() {
 }
 
 function saveToStorage(data) {
-  if (typeof window !== 'undefined') {
+  if (typeof window !== "undefined") {
     try {
-      localStorage.setItem('sitstand-timer-data', JSON.stringify(data))
+      localStorage.setItem("sitstand-timer-data", JSON.stringify(data))
     } catch (e) {
-      console.warn('Failed to save timer data:', e)
+      console.warn("Failed to save timer data:", e)
     }
   }
 }
@@ -90,16 +90,18 @@ function getNextTimer(state) {
 export function completeCurrentTimer() {
   timerStore.update((state) => {
     const nextTimer = getNextTimer(state)
-    
+
     const timerType = state.currentTimer
     const timeCompleted = state[`${timerType}Time`]
     const updatedStats = {
       ...state.stats,
-      [`total${timerType.charAt(0).toUpperCase() + timerType.slice(1)}Time`]: 
-        state.stats[`total${timerType.charAt(0).toUpperCase() + timerType.slice(1)}Time`] + timeCompleted,
+      [`total${timerType.charAt(0).toUpperCase() + timerType.slice(1)}Time`]:
+        state.stats[
+          `total${timerType.charAt(0).toUpperCase() + timerType.slice(1)}Time`
+        ] + timeCompleted,
       lastUsed: new Date().toISOString()
     }
-    
+
     if (nextTimer) {
       return {
         ...state,

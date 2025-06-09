@@ -8,7 +8,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "format": "prettier --write 'src/**/*.svelte' 'src/**/*.js'",
+    "format": "prettier --write 'src/**/*.{svelte,js}' 'tests/**/*.js'",
     "test": "vitest",
     "test:run": "vitest run",
     "test:watch": "vitest --watch",
@@ -29,6 +29,7 @@
     "eslint-plugin-astro": "^1.2.0",
     "eslint-plugin-svelte": "^2.39.0",
     "jsdom": "^26.1.0",
+    "prettier": "^3.5.3",
     "prettier-plugin-svelte": "^3.2.4",
     "vitest": "^3.2.2"
   }

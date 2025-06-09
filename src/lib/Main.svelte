@@ -14,13 +14,13 @@
 
   $effect(() => {
     initializePWA()
-    
+
     // Make notification functions globally available
     window.showVisualAlert = showVisualAlert
   })
 
   $effect(() => {
-    if ($timerStore.allTimersComplete) {
+    if ($timerStore.allTimersComplete && !$timerStore.autoTransition) {
       showTimer = false
     }
   })
@@ -38,15 +38,11 @@
     startNewTimer()
     showTimer = false
   }
-
 </script>
 
 <div class="pt-5 w-full max-h-fit">
   {#if showTimer}
-    <Timer
-      oncomplete={handleComplete}
-      onnewTimer={handleNewTimer}
-    />
+    <Timer oncomplete={handleComplete} onnewTimer={handleNewTimer} />
   {:else}
     <SetTime onstart={handleStart} />
   {/if}

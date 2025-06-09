@@ -32,7 +32,7 @@ it("displays correct timer title and info", () => {
   const title = screen.getByTestId("timer-title")
   expect(title).toBeInTheDocument()
   expect(title).toHaveTextContent(/sitting timer/i)
-  
+
   // Check that duration info is displayed somewhere
   expect(screen.getByText("30 minutes total")).toBeInTheDocument()
 })

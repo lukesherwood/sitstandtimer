@@ -1,0 +1,22 @@
+{
+  "folders": [
+    {
+      "path": ".."
+    }
+  ],
+  "settings": {
+    "svelte.enable": true,
+    "svelte.plugin.typescript.enable": true,
+    "svelte.plugin.svelte.enable": true
+  },
+  "extensions": {
+    "recommendations": [
+      "svelte.svelte-vscode",
+      "astro-build.astro-vscode",
+      "esbenp.prettier-vscode"
+    ],
+    "unwantedRecommendations": [
+      "ardenivanov.svelte-intellisense"
+    ]
+  }
+}

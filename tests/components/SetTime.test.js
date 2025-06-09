@@ -27,11 +27,11 @@ it("renders all timer input fields", async () => {
   expect(screen.getByTestId("sitting-input")).toBeInTheDocument()
   expect(screen.getByTestId("standing-input")).toBeInTheDocument()
   expect(screen.getByTestId("walking-input")).toBeInTheDocument()
-  
+
   // Click to expand settings section to access the auto-transition checkbox
   const settingsButton = screen.getByTestId("settings-toggle-button")
   await fireEvent.click(settingsButton)
-  
+
   expect(screen.getByTestId("auto-transition-checkbox")).toBeInTheDocument()
 })
 
@@ -132,7 +132,7 @@ it("includes autoTransition setting when checkbox is checked", async () => {
   // Expand settings section to access the auto-transition checkbox
   const settingsButton = screen.getByTestId("settings-toggle-button")
   await fireEvent.click(settingsButton)
-  
+
   const autoTransitionCheckbox = screen.getByTestId("auto-transition-checkbox")
   await fireEvent.click(autoTransitionCheckbox)
 

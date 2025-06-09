@@ -1,5 +1,5 @@
 <script>
-  let { 
+  let {
     value = $bindable(),
     min = 0,
     step = 1,
@@ -17,10 +17,10 @@
   }
 
   function handleKeydown(event) {
-    if (event.key === 'ArrowUp') {
+    if (event.key === "ArrowUp") {
       event.preventDefault()
       increment()
-    } else if (event.key === 'ArrowDown') {
+    } else if (event.key === "ArrowDown") {
       event.preventDefault()
       decrement()
     }
@@ -37,7 +37,7 @@
   >
     +
   </button>
-  
+
   <input
     bind:value
     type="number"
@@ -50,7 +50,7 @@
     data-testid="number-input"
     aria-describedby="{id}-helper"
   />
-  
+
   <button
     type="button"
     onclick={decrement}
