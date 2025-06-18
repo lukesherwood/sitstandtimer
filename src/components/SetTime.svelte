@@ -20,6 +20,7 @@
     visual: true
   })
   let notificationSettingsExpanded = $state(false)
+  let customTimerExpanded = $state(false)
 
   // Load saved preferences on mount
   $effect(() => {
@@ -40,6 +41,38 @@
   const isStartEnabled = $derived(
     walkingTime > 0 || standingTime > 0 || sittingTime > 0
   )
+
+  function setRecommendedTimer(sitting, standing, walking) {
+    sittingTime = sitting
+    standingTime = standing
+    walkingTime = walking
+
+    // Start the timer immediately
+    startTimer()
+  }
+
+  function startTimer() {
+    const currentTimer =
+      sittingTime > 0 ? "sitting" : standingTime > 0 ? "standing" : "walking"
+
+    updateSettings({
+      currentTimer,
+      sittingTime: sittingTime * 60,
+      standingTime: standingTime * 60,
+      walkingTime: walkingTime * 60,
+      needsReset: true,
+      allTimersComplete: false,
+      autoTransition
+    })
+
+    updatePreferences({
+      lastUsedSitting: sittingTime,
+      lastUsedStanding: standingTime,
+      lastUsedWalking: walkingTime
+    })
+
+    onstart?.()
+  }
 
   async function handleBrowserNotificationToggle() {
     if (
@@ -70,27 +103,7 @@
 
   function handleSubmit(event) {
     event.preventDefault()
-
-    const currentTimer =
-      sittingTime > 0 ? "sitting" : standingTime > 0 ? "standing" : "walking"
-
-    updateSettings({
-      currentTimer,
-      sittingTime: sittingTime * 60,
-      standingTime: standingTime * 60,
-      walkingTime: walkingTime * 60,
-      needsReset: true,
-      allTimersComplete: false,
-      autoTransition
-    })
-
-    updatePreferences({
-      lastUsedSitting: sittingTime,
-      lastUsedStanding: standingTime,
-      lastUsedWalking: walkingTime
-    })
-
-    onstart?.()
+    startTimer()
   }
 </script>
 
@@ -109,7 +122,7 @@
       throughout your day.
     </p>
     <div
-      class="bg-teal-50 border-l-4 border-teal-600 p-4 mx-4 md:mx-auto md:max-w-xl shadow-sm"
+      class="bg-teal-50 border-l-4 border-teal-300 p-4 mx-4 md:mx-auto md:max-w-xl shadow-sm rounded-xl"
     >
       <p class="text-sm text-teal-900 leading-relaxed">
         <strong class="font-semibold">Health tip:</strong> Standing for just 15
@@ -135,89 +148,233 @@
 
       <!-- Main Form Container -->
       <div class="max-w-4xl mx-auto px-4">
-        <!-- Timer Inputs Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-          <div class="flex flex-col items-center">
-            <label
-              for="sittingTimeInput"
-              class="text-center mb-3 font-semibold text-teal-900 text-lg"
+        <!-- Recommended Timer Buttons -->
+        <div class="mb-8">
+          <h3 class="text-lg font-semibold text-teal-900 mb-4 text-center">
+            Quick Start Options
+          </h3>
+          <!-- Option 1: Card-style with vertical layout -->
+          <!-- <div class="flex flex-wrap justify-center gap-6 mb-6">
+            <button
+              type="button"
+              class="bg-white border-2 border-teal-200 rounded-xl p-4 shadow-lg hover:shadow-xl hover:border-teal-400 transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+              onclick={() => setRecommendedTimer(40, 15, 5)}
+              data-testid="recommended-40-15-5"
             >
-              🪑 Sitting
-            </label>
-            <div data-testid="sitting-input">
-              <NumberInput
-                bind:value={sittingTime}
-                placeholder="40"
-                id="sittingTimeInput"
-              />
-            </div>
-            <span class="text-sm text-teal-700 mt-2 font-medium">minutes</span>
-          </div>
-          <div class="flex flex-col items-center">
-            <label
-              for="standingTimeInput"
-              class="text-center mb-3 font-semibold text-teal-900 text-lg"
+              <div class="text-center">
+                <div class="text-3xl mb-2">🪑 🧍 🚶</div>
+                <div class="text-lg font-bold text-teal-900 mb-1">40-15-5</div>
+                <div class="text-sm text-teal-600">minutes</div>
+              </div>
+            </button>
+            <button
+              type="button"
+              class="bg-white border-2 border-teal-200 rounded-xl p-4 shadow-lg hover:shadow-xl hover:border-teal-400 transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+              onclick={() => setRecommendedTimer(30, 10, 5)}
+              data-testid="recommended-30-10-5"
             >
-              🧍 Standing
-            </label>
-            <div data-testid="standing-input">
-              <NumberInput
-                bind:value={standingTime}
-                placeholder="15"
-                id="standingTimeInput"
-              />
-            </div>
-            <span class="text-sm text-teal-700 mt-2 font-medium">minutes</span>
-          </div>
-          <div class="flex flex-col items-center">
-            <label
-              for="walkingTimeInput"
-              class="text-center mb-3 font-semibold text-teal-900 text-lg"
+              <div class="text-center">
+                <div class="text-3xl mb-2">🪑 🧍 🚶</div>
+                <div class="text-lg font-bold text-teal-900 mb-1">30-10-5</div>
+                <div class="text-sm text-teal-600">minutes</div>
+              </div>
+            </button>
+            <button
+              type="button"
+              class="bg-white border-2 border-teal-200 rounded-xl p-4 shadow-lg hover:shadow-xl hover:border-teal-400 transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+              onclick={() => setRecommendedTimer(20, 10, 5)}
+              data-testid="recommended-20-10-5"
             >
-              🚶 Walking
-            </label>
-            <div data-testid="walking-input">
-              <NumberInput
-                bind:value={walkingTime}
-                placeholder="5"
-                id="walkingTimeInput"
-              />
-            </div>
-            <span class="text-sm text-teal-700 mt-2 font-medium">minutes</span>
+              <div class="text-center">
+                <div class="text-3xl mb-2">🪑 🧍 🚶</div>
+                <div class="text-lg font-bold text-teal-900 mb-1">20-10-5</div>
+                <div class="text-sm text-teal-600">minutes</div>
+              </div>
+            </button>
+          </div> -->
+
+          <!-- Option 2: Pill-style compact buttons -->
+          <!-- 
+          <div class="flex flex-wrap justify-center gap-3 mb-6">
+            <button
+              type="button"
+              onclick={() => setRecommendedTimer(40, 15, 5)}
+              class="px-6 py-2 bg-teal-100 hover:bg-teal-600 text-teal-800 hover:text-white border-2 border-teal-300 hover:border-teal-600 rounded-full font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
+              data-testid="recommended-40-15-5"
+            >
+              🪑40 🧍15 🚶5
+            </button>
+            <button
+              type="button"
+              onclick={() => setRecommendedTimer(30, 10, 5)}
+              class="px-6 py-2 bg-teal-100 hover:bg-teal-600 text-teal-800 hover:text-white border-2 border-teal-300 hover:border-teal-600 rounded-full font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
+              data-testid="recommended-30-10-5"
+            >
+              🪑30 🧍10 🚶5
+            </button>
+            <button
+              type="button"
+              onclick={() => setRecommendedTimer(20, 10, 5)}
+              class="px-6 py-2 bg-teal-100 hover:bg-teal-600 text-teal-800 hover:text-white border-2 border-teal-300 hover:border-teal-600 rounded-full font-semibold transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500"
+              data-testid="recommended-20-10-5"
+            >
+              🪑20 🧍10 🚶5
+            </button>
+          </div> -->
+
+          <!-- Option 3: Icon-style with individual activity breakdown -->
+
+          <div class="flex flex-wrap justify-center gap-4 mb-6">
+            <button
+              type="button"
+              onclick={() => setRecommendedTimer(40, 15, 5)}
+              class="bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white rounded-lg p-4 shadow-xl hover:shadow-2xl transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-teal-300 focus:ring-offset-2"
+              data-testid="recommended-40-15-5"
+            >
+              <div class="flex items-center space-x-1 text-sm font-medium">
+                <span class="text-lg">🪑</span><span>40m</span>
+                <span class="text-gray-200">•</span>
+                <span class="text-lg">🧍</span><span>15m</span>
+                <span class="text-gray-200">•</span>
+                <span class="text-lg">🚶</span><span>5m</span>
+              </div>
+            </button>
+            <button
+              type="button"
+              onclick={() => setRecommendedTimer(30, 10, 5)}
+              class="bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white rounded-lg p-4 shadow-xl hover:shadow-2xl transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-teal-300 focus:ring-offset-2"
+              data-testid="recommended-30-10-5"
+            >
+              <div class="flex items-center space-x-1 text-sm font-medium">
+                <span class="text-lg">🪑</span><span>30m</span>
+                <span class="text-gray-200">•</span>
+                <span class="text-lg">🧍</span><span>10m</span>
+                <span class="text-gray-200">•</span>
+                <span class="text-lg">🚶</span><span>5m</span>
+              </div>
+            </button>
+            <button
+              type="button"
+              onclick={() => setRecommendedTimer(20, 10, 5)}
+              class="bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white rounded-lg p-4 shadow-xl hover:shadow-2xl transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-teal-300 focus:ring-offset-2"
+              data-testid="recommended-20-10-5"
+            >
+              <div class="flex items-center space-x-1 text-sm font-medium">
+                <span class="text-lg">🪑</span><span>20m</span>
+                <span class="text-gray-200">•</span>
+                <span class="text-lg">🧍</span><span>10m</span>
+                <span class="text-gray-200">•</span>
+                <span class="text-lg">🚶</span><span>5m</span>
+              </div>
+            </button>
           </div>
         </div>
 
-        <!-- Prominent Start Button -->
-        <form onsubmit={handleSubmit} data-testid="timer-form" class="mb-6">
-          <div class="flex justify-center">
-            <div data-testid="start-timer-button">
-              <Button
-                type="submit"
-                tooltip="Start Timer"
-                disabledText="Enter at least one timer duration"
-                clazz="text-2xl font-bold w-48 h-20 px-10 py-6 bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 focus:ring-4 focus:ring-teal-300 focus:ring-offset-2 shadow-xl hover:shadow-2xl transition-all duration-200 transform hover:scale-105"
-                disabled={!isStartEnabled}
-              >
-                {#snippet children()}
-                  🚀 Start Timer
-                {/snippet}
-              </Button>
-            </div>
-          </div>
-        </form>
-
-        <!-- Combined Settings Section -->
-        <div class="bg-teal-50 rounded-xl border border-teal-200 shadow-sm">
+        <!-- Custom Timer Toggle -->
+        <div
+          class="bg-teal-50 rounded-xl border border-teal-300 shadow-sm mb-8"
+        >
           <button
             type="button"
-            class="w-full p-4 text-left flex items-center justify-between hover:bg-teal-100 rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+            class="w-full p-4 text-left flex items-center text-teal-900 justify-between hover:bg-teal-200 rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
+            onclick={() => (customTimerExpanded = !customTimerExpanded)}
+            data-testid="custom-timer-toggle-button"
+          >
+            <h3 class="text-base font-semibold flex items-center gap-2">
+              ⏰ Set Custom Timer
+            </h3>
+            <svg
+              class="w-4 h-4 transition-transform duration-200 {customTimerExpanded
+                ? 'rotate-180'
+                : ''}"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </button>
+
+          {#if customTimerExpanded}
+            <div class="px-4 pb-4 border-t border-teal-300 pt-4">
+              <!-- Timer Inputs Grid -->
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-4">
+                <div class="flex flex-col items-center">
+                  <label
+                    for="sittingTimeInput"
+                    class="text-center mb-3 font-semibold text-teal-900 text-lg"
+                  >
+                    🪑 Sitting
+                  </label>
+                  <div data-testid="sitting-input">
+                    <NumberInput
+                      bind:value={sittingTime}
+                      placeholder="40"
+                      id="sittingTimeInput"
+                    />
+                  </div>
+                  <span class="text-sm text-teal-700 mt-2 font-medium"
+                    >minutes</span
+                  >
+                </div>
+                <div class="flex flex-col items-center">
+                  <label
+                    for="standingTimeInput"
+                    class="text-center mb-3 font-semibold text-teal-900 text-lg"
+                  >
+                    🧍 Standing
+                  </label>
+                  <div data-testid="standing-input">
+                    <NumberInput
+                      bind:value={standingTime}
+                      placeholder="15"
+                      id="standingTimeInput"
+                    />
+                  </div>
+                  <span class="text-sm text-teal-700 mt-2 font-medium"
+                    >minutes</span
+                  >
+                </div>
+                <div class="flex flex-col items-center">
+                  <label
+                    for="walkingTimeInput"
+                    class="text-center mb-3 font-semibold text-teal-900 text-lg"
+                  >
+                    🚶 Walking
+                  </label>
+                  <div data-testid="walking-input">
+                    <NumberInput
+                      bind:value={walkingTime}
+                      placeholder="5"
+                      id="walkingTimeInput"
+                    />
+                  </div>
+                  <span class="text-sm text-teal-700 mt-2 font-medium"
+                    >minutes</span
+                  >
+                </div>
+              </div>
+            </div>
+          {/if}
+        </div>
+
+        <!-- Combined Settings Section -->
+        <div
+          class="bg-teal-50 rounded-xl border border-teal-300 shadow-sm mb-8"
+        >
+          <button
+            type="button"
+            class="w-full p-4 text-teal-900 text-left flex items-center justify-between hover:bg-teal-200 rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
             onclick={() =>
               (notificationSettingsExpanded = !notificationSettingsExpanded)}
             data-testid="settings-toggle-button"
           >
-            <h3
-              class="text-base font-semibold text-teal-900 flex items-center gap-2"
-            >
+            <h3 class="text-base font-semibold flex items-center gap-2">
               ⚙️ Timer Settings
             </h3>
             <svg
@@ -333,6 +490,24 @@
             </div>
           {/if}
         </div>
+        <!-- Prominent Start Button -->
+        <form onsubmit={handleSubmit} data-testid="timer-form" class="mb-6">
+          <div class="flex justify-center">
+            <div data-testid="start-timer-button">
+              <Button
+                type="submit"
+                tooltip="Start Timer"
+                disabledText="Enter at least one timer duration"
+                clazz="text-2xl font-bold w-48 h-20 px-10 py-6 bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 focus:ring-4 focus:ring-teal-300 focus:ring-offset-2 shadow-xl hover:shadow-2xl transition-all duration-200 transform hover:scale-105"
+                disabled={!isStartEnabled}
+              >
+                {#snippet children()}
+                  Start Timer
+                {/snippet}
+              </Button>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
   </section>

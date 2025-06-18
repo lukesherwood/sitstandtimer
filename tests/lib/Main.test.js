@@ -1,10 +1,6 @@
 import { render, screen, fireEvent } from "@testing-library/svelte"
 import Main from "@/lib/Main.svelte"
-import {
-  timerStore,
-  startNewTimer,
-  completeCurrentTimer
-} from "@/stores/timerStore.js"
+import { timerStore, startNewTimer } from "@/stores/timerStore.js"
 
 // Mock notifications
 vi.mock("@/lib/notifications.js", () => ({
@@ -51,15 +47,23 @@ describe("Auto-Mode Completion Behavior", () => {
       needsReset: false
     }))
 
-    // Simulate that a timer was started (showTimer should be true)
-    const sittingInput = screen
-      .getByTestId("sitting-input")
-      .querySelector("input")
-    await fireEvent.input(sittingInput, { target: { value: "1" } })
+    // Helper function to expand custom timer and set value
+    const setTimerAndStart = async (value) => {
+      const customTimerButton = screen.getByTestId("custom-timer-toggle-button")
+      await fireEvent.click(customTimerButton)
 
-    const startWrapper = screen.getByTestId("start-timer-button")
-    const startButton = startWrapper.querySelector("button")
-    await fireEvent.click(startButton)
+      const sittingInput = screen
+        .getByTestId("sitting-input")
+        .querySelector("input")
+      await fireEvent.input(sittingInput, { target: { value: value } })
+
+      const startWrapper = screen.getByTestId("start-timer-button")
+      const startButton = startWrapper.querySelector("button")
+      await fireEvent.click(startButton)
+    }
+
+    // Simulate that a timer was started (showTimer should be true)
+    await setTimerAndStart("1")
 
     // Should now be in Timer view
     expect(screen.getByTestId("timer")).toBeInTheDocument()
