@@ -15,6 +15,7 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@astrojs/netlify": "^6.4.0",
     "@astrojs/svelte": "^7.1.0",
     "@astrojs/tailwind": "^5.1.0",
     "@sveltejs/vite-plugin-svelte": "^5.1.0",
