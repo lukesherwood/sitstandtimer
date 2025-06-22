@@ -255,16 +255,16 @@
             </button>
             <button
               type="button"
-              onclick={() => setRecommendedTimer(20, 10, 5)}
+              onclick={() => setRecommendedTimer(45, 15, 0)}
               class="bg-gradient-to-r from-teal-600 to-teal-700 hover:from-teal-700 hover:to-teal-800 text-white rounded-lg p-4 shadow-xl hover:shadow-2xl transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-teal-300 focus:ring-offset-2"
               data-testid="recommended-20-10-5"
             >
               <div class="flex items-center space-x-1 text-sm font-medium">
-                <span class="text-lg">🪑</span><span>20m</span>
+                <span class="text-lg">🪑</span><span>45m</span>
                 <span class="text-gray-200">•</span>
-                <span class="text-lg">🧍</span><span>10m</span>
+                <span class="text-lg">🧍</span><span>15m</span>
                 <span class="text-gray-200">•</span>
-                <span class="text-lg">🚶</span><span>5m</span>
+                <span class="text-lg">🚶</span><span>0m</span>
               </div>
             </button>
           </div>

@@ -16,7 +16,6 @@ vi.mock("@/lib/notifications.js", () => ({
   requestNotificationPermission: vi.fn(() => Promise.resolve(true))
 }))
 
-// Helper functions to reduce repetition
 const testHelpers = {
   async expandCustomTimer() {
     const customTimerButton = screen.getByTestId("custom-timer-toggle-button")
@@ -89,7 +88,6 @@ it("renders all timer input fields", async () => {
 
   expect(screen.getByTestId("set-time")).toBeInTheDocument()
 
-  // Custom timer inputs are now hidden by default - need to expand to see them
   await testHelpers.expandCustomTimer()
 
   expect(screen.getByTestId("sitting-input")).toBeInTheDocument()
@@ -178,7 +176,6 @@ it("includes autoTransition setting when checkbox is checked", async () => {
 it("displays health tip information", () => {
   render(SetTime)
 
-  // Instead of checking exact text, check for key elements
   expect(screen.getByText(/health tip/i)).toBeInTheDocument()
   expect(screen.getByText(/learn more/i)).toBeInTheDocument()
 })
@@ -202,7 +199,6 @@ it("starts timer immediately when recommended timer button is clicked", async ()
   const recommendedButton = screen.getByTestId("recommended-40-15-5")
   await fireEvent.click(recommendedButton)
 
-  // Should immediately start the timer and call onstart
   expect(startEventFired).toBe(true)
   expect(updateSettings).toHaveBeenCalledWith(
     expect.objectContaining({
@@ -221,7 +217,6 @@ it("different recommended buttons start with correct timer values", async () => 
 
   render(SetTime, { props: { onstart } })
 
-  // Test 30-10-5 button
   const button30105 = screen.getByTestId("recommended-30-10-5")
   await fireEvent.click(button30105)
 
@@ -236,16 +231,15 @@ it("different recommended buttons start with correct timer values", async () => 
 
   vi.clearAllMocks()
 
-  // Test 20-10-5 button
   const button20105 = screen.getByTestId("recommended-20-10-5")
   await fireEvent.click(button20105)
 
   expect(updateSettings).toHaveBeenCalledWith(
     expect.objectContaining({
       currentTimer: "sitting",
-      sittingTime: 20 * 60,
-      standingTime: 10 * 60,
-      walkingTime: 5 * 60
+      sittingTime: 45 * 60,
+      standingTime: 15 * 60,
+      walkingTime: 0 * 60
     })
   )
 })
@@ -253,7 +247,6 @@ it("different recommended buttons start with correct timer values", async () => 
 it("hides custom timer inputs by default", () => {
   render(SetTime)
 
-  // Custom timer inputs should not be visible initially
   expect(screen.queryByTestId("sitting-input")).not.toBeInTheDocument()
   expect(screen.queryByTestId("standing-input")).not.toBeInTheDocument()
   expect(screen.queryByTestId("walking-input")).not.toBeInTheDocument()

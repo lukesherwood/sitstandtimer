@@ -63,16 +63,10 @@
 </div>
 
 <style>
-  /* Chrome, Safari, Edge, Opera */
-  input::-webkit-outer-spin-button,
-  input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-
-  /* Firefox */
+  /* Ensure no spinners appear in any browser */
   input[type="number"] {
-    appearance: textfield;
+    -webkit-appearance: none;
     -moz-appearance: textfield;
+    appearance: textfield;
   }
 </style>
