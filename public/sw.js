@@ -15,12 +15,23 @@ self.addEventListener('install', (event) => {
     caches.open(CACHE_NAME)
       .then((cache) => {
         console.log('Opened cache')
-        return cache.addAll(urlsToCache)
+        // Try to cache each resource individually to avoid complete failure
+        return Promise.allSettled(
+          urlsToCache.map(url => 
+            cache.add(url).catch(error => {
+              console.warn(`Failed to cache ${url}:`, error)
+              return null
+            })
+          )
+        )
       })
       .catch((error) => {
-        console.error('Failed to cache resources:', error)
+        console.error('Failed to open cache:', error)
       })
   )
+  
+  // Force the waiting service worker to become the active service worker
+  self.skipWaiting()
 })
 
 // Fetch event - serve from cache, fallback to network
@@ -50,6 +61,9 @@ self.addEventListener('activate', (event) => {
           }
         })
       )
+    }).then(() => {
+      // Claim all clients immediately
+      return self.clients.claim()
     })
   )
 })

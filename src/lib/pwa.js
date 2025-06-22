@@ -4,17 +4,44 @@ let deferredPrompt
 
 // Register service worker
 export async function registerServiceWorker() {
-  if ("serviceWorker" in navigator) {
-    try {
-      const registration = await navigator.serviceWorker.register("/sw.js")
-      console.log("Service Worker registered:", registration)
-      return registration
-    } catch (error) {
-      console.error("Service Worker registration failed:", error)
+  if (!("serviceWorker" in navigator)) {
+    console.warn("Service Workers not supported")
+    return null
+  }
+
+  try {
+    // Check if we're in a secure context
+    if (!window.isSecureContext) {
+      console.warn("Service Worker requires secure context (HTTPS)")
       return null
     }
-  } else {
-    console.warn("Service Workers not supported")
+
+    const registration = await navigator.serviceWorker.register("/sw.js", {
+      scope: "/",
+      updateViaCache: "none"
+    })
+
+    console.log("Service Worker registered:", registration)
+
+    // Handle service worker updates
+    registration.addEventListener("updatefound", () => {
+      const newWorker = registration.installing
+      if (newWorker) {
+        newWorker.addEventListener("statechange", () => {
+          if (
+            newWorker.state === "installed" &&
+            navigator.serviceWorker.controller
+          ) {
+            console.log("New service worker available")
+            // Optionally notify user about update
+          }
+        })
+      }
+    })
+
+    return registration
+  } catch (error) {
+    console.error("Service Worker registration failed:", error)
     return null
   }
 }
@@ -22,59 +49,110 @@ export async function registerServiceWorker() {
 // Handle PWA install prompt
 export function handleInstallPrompt() {
   window.addEventListener("beforeinstallprompt", (e) => {
-    // Prevent the mini-infobar from appearing on mobile
-    e.preventDefault()
-    // Save the event so it can be triggered later
-    deferredPrompt = e
-    // Show install button or notification
-    showInstallPrompt()
+    try {
+      // Prevent the mini-infobar from appearing on mobile
+      e.preventDefault()
+      // Save the event so it can be triggered later
+      deferredPrompt = e
+      // Show install button or notification
+      showInstallPrompt()
+    } catch (error) {
+      console.error("Error handling install prompt:", error)
+    }
+  })
+
+  // Handle any errors that might occur
+  window.addEventListener("error", (e) => {
+    if (e.message && e.message.includes("beforeinstallprompt")) {
+      console.error("PWA install prompt error:", e)
+    }
   })
 }
 
 // Show install prompt to user
 function showInstallPrompt() {
-  // Create install notification
-  const installBanner = document.createElement("div")
-  installBanner.id = "install-banner"
-  installBanner.className =
-    "fixed bottom-4 left-4 right-4 bg-teal-600 text-white p-4 rounded-lg shadow-lg z-50 flex justify-between items-center"
-  installBanner.innerHTML = `
-    <div>
-      <strong>Install Sit Stand Timer</strong>
-      <p class="text-sm">Add to your home screen for a better experience!</p>
-    </div>
-    <div class="flex gap-2">
-      <button id="install-button" class="bg-white text-teal-600 px-3 py-1 rounded font-medium">Install</button>
-      <button id="dismiss-install" class="text-white opacity-75 hover:opacity-100">×</button>
-    </div>
-  `
+  // Don't show if already exists
+  if (document.getElementById("install-banner")) {
+    return
+  }
 
-  document.body.appendChild(installBanner)
+  try {
+    // Create install notification
+    const installBanner = document.createElement("div")
+    installBanner.id = "install-banner"
+    installBanner.className =
+      "fixed bottom-4 left-4 right-4 bg-teal-600 text-white p-4 rounded-lg shadow-lg z-50 flex justify-between items-center"
 
-  // Handle install button click
-  document
-    .getElementById("install-button")
-    ?.addEventListener("click", async () => {
-      if (deferredPrompt) {
-        deferredPrompt.prompt()
-        const { outcome } = await deferredPrompt.userChoice
-        console.log(`User choice: ${outcome}`)
-        deferredPrompt = null
+    // Create elements safely
+    const contentDiv = document.createElement("div")
+    const titleElement = document.createElement("strong")
+    titleElement.textContent = "Install Sit Stand Timer"
+    const descElement = document.createElement("p")
+    descElement.className = "text-sm"
+    descElement.textContent = "Add to your home screen for a better experience!"
+    contentDiv.appendChild(titleElement)
+    contentDiv.appendChild(descElement)
+
+    const buttonDiv = document.createElement("div")
+    buttonDiv.className = "flex gap-2"
+
+    const installButton = document.createElement("button")
+    installButton.id = "install-button"
+    installButton.className =
+      "bg-white text-teal-600 px-3 py-1 rounded font-medium"
+    installButton.textContent = "Install"
+
+    const dismissButton = document.createElement("button")
+    dismissButton.id = "dismiss-install"
+    dismissButton.className = "text-white opacity-75 hover:opacity-100"
+    dismissButton.textContent = "×"
+
+    buttonDiv.appendChild(installButton)
+    buttonDiv.appendChild(dismissButton)
+
+    installBanner.appendChild(contentDiv)
+    installBanner.appendChild(buttonDiv)
+
+    document.body.appendChild(installBanner)
+
+    // Handle install button click with error handling
+    installButton.addEventListener("click", async () => {
+      try {
+        if (deferredPrompt) {
+          await deferredPrompt.prompt()
+          const { outcome } = await deferredPrompt.userChoice
+          console.log(`User choice: ${outcome}`)
+          deferredPrompt = null
+        }
+      } catch (error) {
+        console.error("Install prompt failed:", error)
+      } finally {
+        removeBanner()
       }
-      installBanner.remove()
     })
 
-  // Handle dismiss button
-  document.getElementById("dismiss-install")?.addEventListener("click", () => {
-    installBanner.remove()
-  })
+    // Handle dismiss button
+    dismissButton.addEventListener("click", () => {
+      removeBanner()
+    })
 
-  // Auto-hide after 10 seconds
-  setTimeout(() => {
-    if (document.getElementById("install-banner")) {
-      installBanner.remove()
+    // Function to safely remove banner
+    function removeBanner() {
+      try {
+        const banner = document.getElementById("install-banner")
+        if (banner && banner.parentNode) {
+          banner.parentNode.removeChild(banner)
+        }
+      } catch (error) {
+        console.error("Error removing install banner:", error)
+      }
     }
-  }, 10000)
+
+    // Auto-hide after 10 seconds
+    setTimeout(removeBanner, 10000)
+  } catch (error) {
+    console.error("Error creating install prompt:", error)
+  }
 }
 
 // Check if app is running in standalone mode
