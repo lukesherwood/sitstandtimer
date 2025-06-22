@@ -36,11 +36,54 @@ self.addEventListener('install', (event) => {
 
 // Fetch event - serve from cache, fallback to network
 self.addEventListener('fetch', (event) => {
+  const { request } = event
+  const url = new URL(request.url)
+
+  // Handle navigation requests (PWA routing)
+  if (request.mode === 'navigate') {
+    event.respondWith(
+      caches.match(request)
+        .then((response) => {
+          if (response) {
+            return response
+          }
+          
+          // For navigation requests, try to fetch from network
+          return fetch(request)
+            .then((networkResponse) => {
+              // Cache successful navigation responses
+              if (networkResponse.status === 200) {
+                const responseClone = networkResponse.clone()
+                caches.open(CACHE_NAME)
+                  .then((cache) => {
+                    cache.put(request, responseClone)
+                  })
+                  .catch((error) => {
+                    console.warn('Failed to cache navigation response:', error)
+                  })
+              }
+              return networkResponse
+            })
+            .catch((error) => {
+              console.error('Navigation fetch failed:', error)
+              // If we're offline and trying to navigate to /about, serve from cache
+              if (url.pathname === '/about') {
+                return caches.match('/about')
+              }
+              // Otherwise serve the home page from cache as fallback
+              return caches.match('/')
+            })
+        })
+    )
+    return
+  }
+
+  // Handle other requests (assets, etc.)
   event.respondWith(
-    caches.match(event.request)
+    caches.match(request)
       .then((response) => {
         // Return cached version or fetch from network
-        return response || fetch(event.request)
+        return response || fetch(request)
       })
       .catch((error) => {
         console.error('Fetch failed:', error)

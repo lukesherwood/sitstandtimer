@@ -1,5 +1,23 @@
 <script>
   let isOpen = false
+
+  // Handle navigation in PWA mode
+  function handleNavigation(event, url) {
+    // Check if we're in PWA mode
+    const isPWA =
+      window.matchMedia("(display-mode: standalone)").matches ||
+      window.navigator.standalone ||
+      document.referrer.includes("android-app://")
+
+    if (isPWA) {
+      // In PWA mode, use the browser's navigation but ensure it stays in-app
+      event.preventDefault()
+
+      // Use window.location to stay within the PWA context
+      window.location.href = url
+    }
+    // If not in PWA mode, let the default navigation happen
+  }
 </script>
 
 <nav class="bg-teal-800 text-red-100 shadow-lg">
@@ -7,7 +25,11 @@
     <div class="flex justify-between items-center">
       <!-- Home button -->
       <div class="flex items-center">
-        <a href="/" class="flex items-center py-5 px-2 hover:text-amber-500">
+        <a
+          href="/"
+          class="flex items-center py-5 px-2 hover:text-amber-500"
+          onclick={(e) => handleNavigation(e, "/")}
+        >
           <svg
             class="h-6 w-6 mr-1"
             xmlns="http://www.w3.org/2000/svg"
@@ -26,8 +48,10 @@
         </a>
         <!-- Desktop Links - Shown inline with Home button on larger screens -->
         <div class="hidden md:flex space-x-4 items-center">
-          <a href="/about" class="py-2 px-3 font-bold hover:text-amber-500"
-            >About</a
+          <a
+            href="/about"
+            class="py-2 px-3 font-bold hover:text-amber-500"
+            onclick={(e) => handleNavigation(e, "/about")}>About</a
           >
         </div>
       </div>
@@ -63,8 +87,16 @@
     <div
       class={`md:hidden ${isOpen ? "flex" : "hidden"} flex-col items-center`}
     >
-      <a href="/" class="py-5 px-3 font-bold hover:text-gray-900">Home</a>
-      <a href="/about" class="py-5 px-3 font-bold hover:text-gray-900">About</a>
+      <a
+        href="/"
+        class="py-5 px-3 font-bold hover:text-gray-900"
+        onclick={(e) => handleNavigation(e, "/")}>Home</a
+      >
+      <a
+        href="/about"
+        class="py-5 px-3 font-bold hover:text-gray-900"
+        onclick={(e) => handleNavigation(e, "/about")}>About</a
+      >
     </div>
   </div>
 </nav>

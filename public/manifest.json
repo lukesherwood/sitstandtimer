@@ -3,6 +3,7 @@
   "short_name": "SitStandTimer",
   "description": "A productivity timer to help you alternate between sitting, standing, and walking",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#14b8a6",
