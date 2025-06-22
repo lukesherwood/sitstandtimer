@@ -63,6 +63,28 @@
 </div>
 
 <style>
+  /* Chrome, Safari, Edge, Opera */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+    display: none;
+  }
+
+  /* Firefox - more comprehensive approach */
+  input[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+  }
+
+  /* Additional Firefox-specific rules */
+  input[type="number"]::-moz-inner-spin-button,
+  input[type="number"]::-moz-outer-spin-button {
+    -moz-appearance: none;
+    display: none;
+    margin: 0;
+  }
+
   /* Ensure no spinners appear in any browser */
   input[type="number"] {
     -webkit-appearance: none;
