@@ -32,8 +32,6 @@ it("displays correct timer title and info", () => {
   const title = screen.getByTestId("timer-title")
   expect(title).toBeInTheDocument()
   expect(title).toHaveTextContent(/sitting timer/i)
-
-  // Check that duration info is displayed somewhere
   expect(screen.getByText("30 minutes total")).toBeInTheDocument()
 })
 
@@ -60,4 +58,46 @@ it("works without timerState prop (uses store)", () => {
 
   expect(screen.getByTestId("timer")).toBeInTheDocument()
   expect(screen.getByTestId("timer-title")).toBeInTheDocument()
+})
+
+it("reset button works when timer is paused", async () => {
+  const resetState = {
+    ...defaultTimerState,
+    sittingTime: 10, // 10 seconds for easier testing
+    needsReset: false
+  }
+
+  render(Timer, { props: { timerState: resetState } })
+
+  await new Promise(resolve => setTimeout(resolve, 1200))
+
+  const pauseButton = screen.getByTestId("pause-resume-button").querySelector("button")
+  await fireEvent.click(pauseButton)
+
+  const pauseButtonAfterPause = screen.getByTestId("pause-resume-button")
+  const svg = pauseButtonAfterPause.querySelector("svg")
+  const polygon = svg.querySelector("polygon")
+  expect(polygon).toBeInTheDocument()
+
+  const timerDisplayBefore = screen.getByText(/\d{2}:\d{2}/)
+  expect(timerDisplayBefore.textContent).not.toBe("00:10")
+
+  const resetButton = screen.getByTestId("reset-button").querySelector("button")
+  await fireEvent.click(resetButton)
+
+  await new Promise(resolve => setTimeout(resolve, 100))
+
+  const timerDisplayAfter = screen.getByText(/\d{2}:\d{2}/)
+  expect(timerDisplayAfter.textContent).toBe("00:10")
+  
+  const pauseButtonAfterReset = screen.getByTestId("pause-resume-button")
+  const svgAfterReset = pauseButtonAfterReset.querySelector("svg")
+  const polygonAfterReset = svgAfterReset.querySelector("polygon")
+  expect(polygonAfterReset).toBeInTheDocument()
+  
+  expect(pauseButtonAfterReset.textContent).toContain("Resume")
+
+  await new Promise(resolve => setTimeout(resolve, 500))
+  const timerDisplayFinal = screen.getByText(/\d{2}:\d{2}/)
+  expect(timerDisplayFinal.textContent).toBe("00:10")
 })

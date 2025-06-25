@@ -109,7 +109,10 @@
       timerComplete = false
     }
     end = Date.now() + countdown * 1000
-    interval = setTimeout(updateTimer, TIMER_INTERVAL)
+    count = countdown
+    if (!isPaused) {
+      interval = setTimeout(updateTimer, TIMER_INTERVAL)
+    }
     timerStore.update((state) => ({ ...state, needsReset: false }))
   }
 
