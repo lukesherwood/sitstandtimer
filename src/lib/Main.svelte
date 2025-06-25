@@ -7,11 +7,15 @@
     completeCurrentTimer,
     startNewTimer
   } from "../stores/timerStore.js"
+  import { initializePWA } from "./pwa.js"
   import { showVisualAlert } from "./notifications.js"
 
   let showTimer = $state(false)
 
   $effect(() => {
+    // Initialize PWA functionality
+    initializePWA()
+    
     // Make notification functions globally available
     window.showVisualAlert = showVisualAlert
   })
