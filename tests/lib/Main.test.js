@@ -8,10 +8,6 @@ vi.mock("@/lib/notifications.js", () => ({
   showVisualAlert: vi.fn()
 }))
 
-// Mock PWA
-vi.mock("@/lib/pwa.js", () => ({
-  initializePWA: vi.fn()
-}))
 
 beforeEach(() => {
   startNewTimer()
